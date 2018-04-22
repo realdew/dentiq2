@@ -4,7 +4,7 @@ import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 
 /**
- * DentiqApiServer 
+ * DentiqApiServer
  *
  * @author Ju-hyeon Lee (leejuhyeon@gmail.com)
  * @date   2018-04-22
