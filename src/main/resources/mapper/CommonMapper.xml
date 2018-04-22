@@ -1,0 +1,1001 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!--
+       Copyright 2015-2016 the original author or authors.
+       Licensed under the Apache License, Version 2.0 (the "License");
+       you may not use this file except in compliance with the License.
+       You may obtain a copy of the License at
+          http://www.apache.org/licenses/LICENSE-2.0
+       Unless required by applicable law or agreed to in writing, software
+       distributed under the License is distributed on an "AS IS" BASIS,
+       WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+       See the License for the specific language governing permissions and
+       limitations under the License.
+-->
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="dentiq2.api.mapper.CommonMapper">
+	
+	<!--  위치 정보 통합 MAP -->
+	<resultMap id="mapLocation" type="dentiq2.api.model.Location">
+		<result property="roadAddr"		 	column="road_Addr" 			/>
+		<result property="roadAddrPart1"	column="road_Addr_Part_1"	/>
+		<result property="roadAddrPart2"	column="road_Addr_Part_2"	/>
+		<result property="jibunAddr"		column="jibun_Addr"	 />
+		<result property="engAddr"		 	column="eng_Addr"		 />
+		<result property="zipNo"			column="zip_No"		 />
+		<result property="admCd"			column="adm_Cd"		 />
+		<result property="rnMgtSn"		 	column="rn_Mgt_Sn"		 />
+		<result property="bdMgtSn"		 	column="bd_Mgt_Sn"		 />
+		<result property="detBdNmList"	 	column="det_Bd_Nm_List"	 />
+		<result property="bdNm"			 	column="bd_Nm"			 />
+		<result property="bdKdcd"			column="bd_Kd_cd"		 />
+		<result property="siNm"			 	column="si_Nm"			 />
+		<result property="sggNm"			column="sgg_Nm"		 />
+		<result property="emdNm"			column="emd_Nm"		 />
+		<result property="liNm"			 	column="li_Nm"			 />
+		<result property="rn"				column="rn"			 />
+		<result property="udrtYn"			column="udrt_Yn"		 />
+		<result property="buldMnnm"			column="buld_Mnnm"		 />
+		<result property="buldSlno"			column="buld_Slno"		 />
+		<result property="mtYn"				column="mt_Yn"			 />
+		<result property="lnbrMnnm"		 	column="lnbr_Mnnm"		 />
+		<result property="lnbrSlno"		 	column="lnbr_Slno"		 />
+		<result property="emdNo"			column="emd_No"		 />
+		
+		<result property="addrMain"			column="addr_Main"		 />
+		<result property="addrDetail"		column="addr_Detail"	 />
+		
+		<result property="entX"				column="ent_X"			 />
+		<result property="entY"				column="ent_Y"			 />
+		
+		<result property="latLonX"			column="lat_Lon_X"		 />
+		<result property="latLonY"			column="lat_Lon_Y"		 />
+		
+	    <result property="locationCode"		column="LOCATION_CODE" 	/>
+	    <result property="sidoCode"			column="SIDO_CODE" 		/>
+	    <result property="sidoName"			column="SIDO_NAME" 		/>
+	    <result property="siguCode"			column="SIGU_CODE" 		/>
+	    <result property="siguName"			column="SIGU_NAME" 		/>
+	</resultMap>
+
+
+	<!-- 병원 정보 MAP -->
+	<resultMap id="mapHospital" type="dentiq2.api.model.Hospital">
+		<id property="hospitalId"					column="HOSPITAL_ID" />
+		
+		<result property="bizRegNo"					column="BIZ_REG_NO" />
+		<result property="bizRegName"				column="BIZ_REG_NAME" />
+		<result property="yKiho"					column="Y_KIHO" />
+		<result property="membershipType"			column="MEMBERSHIP_TYPE" />
+		<result property="userId"					column="USER_ID" />
+		
+		<result property="hospitalName"				column="HOSPITAL_NAME" />
+		<result property="clCode"					column="CL_CODE" />
+		<result property="clCodeName"				column="CL_CODE_NAME" />
+		
+		<result property="hospitalTelNo"			column="HOSPITAL_TEL_NO" />
+		<result property="hospitalUrl"				column="HOSPITAL_URL" />
+		<result property="hospitalEmail"			column="HOSPITAL_EMAIL" />
+		<result property="ceoName"					column="CEO_NAME" />
+		<result property="estDate"					column="EST_DATE" />
+		
+		<result property="tdrCnt"					column="TDR_CNT" />
+		<result property="gdrCnt"					column="GDR_CNT" />
+		<result property="idrCnt"					column="IDR_CNT" />
+		<result property="rdrCnt"					column="RDR_CNT" />
+		<result property="sdrCnt"					column="SDR_CNT" />
+		
+		<!-- <result property="logoImageName"			column="LOGO_IMAGE_NAME" /> -->
+		
+		<result property="hospitalTypeCode"			column="HOSPITAL_TYPE_CODE" />
+		<result property="hospitalTypeText"			column="HOSPITAL_TYPE_TEXT" />
+		
+		<result property="holidayJson"				column="HOLIDAY_JSON" />
+		<result property="holidayText"				column="HOLIDAY_TEXT" />
+		
+		<result property="workingTimeWeekdayStart"	column="WORKING_TIME_WEEKDAY_START" />
+		<result property="workingTimeWeekdayEnd"	column="WORKING_TIME_WEEKDAY_END" />
+		<result property="workingTimeWeekendStart"	column="WORKING_TIME_WEEKEND_START" />
+		<result property="workingTimeWeekendEnd"	column="WORKING_TIME_WEEKEND_END" />
+		<result property="workingTimeText"			column="WORKING_TIME_TEXT" />
+		
+		<result property="lunchTimeStart"			column="LUNCH_TIME_START" />
+		<result property="lunchTimeEnd"				column="LUNCH_TIME_END" />
+		
+		<result property="clinicSubject"			column="CLINIC_SUBJECT" />
+		<result property="totalMemberCnt"			column="TOTAL_MEMBER_CNT" />
+		
+		<result property="defaultHrTelNo"			column="DEFAULT_HR_TEL_NO" />
+		<result property="defaultHrOfficerName"		column="DEFAULT_HR_OFFICER_NAME" />
+		<result property="defaultHrEmail"			column="DEFAULT_HR_EMAIL" />
+	    
+	    
+	    <association property="location"			resultMap="mapLocation" />
+	</resultMap>
+	
+	<!-- 채용공고 MAP -->
+	<resultMap id="mapJobAd" type="dentiq2.api.model.JobAd">
+		<id property="jobAdId"						column="JOB_AD_ID" />
+		
+		<result property="adStatus"					column="AD_STATUS" />
+		<result property="adType"					column="AD_TYPE" />
+		<result property="hospitalId"				column="HOSPITAL_ID" />
+		
+		<result property="title"					column="TITLE" />
+		<result property="adRegDate"				column="AD_REG_DATE" />
+		<result property="adRegTime"				column="AD_REG_TIME" />
+		<result property="adOpenDate"				column="AD_OPEN_DATE" />
+		<result property="adOpenTime"				column="AD_OPEN_TIME" />
+		<result property="adCloseDate"				column="AD_CLOSE_DATE" />
+		<result property="adCloseTime"				column="AD_CLOSE_TIME" />
+		
+		<result property="hiringTermType"			column="HIRING_TERM_TYPE" />
+		<result property="hiringStartDate"			column="HIRING_START_DATE" />
+		<result property="hiringStartTime"			column="HIRING_START_TIME" />
+		<result property="hiringEndDate"			column="HIRING_END_DATE" />
+		<result property="hiringEndTime"			column="HIRING_END_TIME" />
+		
+		<result property="applyWayJson"				column="APPLY_WAY_JSON" />
+		
+		<result property="workDesc"					column="WORK_DESC" />
+		
+		<result property="hiringCnt"				column="HIRING_CNT" />
+		<result property="salaryType"				column="SALARY_TYPE" />
+		<result property="salaryText"				column="SALARY_TEXT" />
+		<result property="hiringRoleType"			column="HIRING_ROLE_TYPE" />
+		<result property="hiringRoleText"			column="HIRING_ROLE_TEXT" />
+		
+		<result property="eduLevel"					column="EDU_LEVEL" />
+		<result property="expType"					column="EXP_TYPE" />
+		<result property="licenseText"				column="LICENSE_TEXT" />
+		
+		<result property="jobWorkingDay"				column="JOB_WORKING_DAY" />
+		<result property="jobWorkingTimeWeekdayStart"	column="JOB_WORKING_TIME_WEEKDAY_START" />
+		<result property="jobWorkingTimeWeekdayEnd"		column="JOB_WORKING_TIME_WEEKDAY_END" />
+		<result property="jobWorkingTimeWeekendStart"	column="JOB_WORKING_TIME_WEEKEND_START" />
+		<result property="jobWorkingTimeWeekendEnd"		column="JOB_WORKING_TIME_WEEKEND_END" />
+		<result property="jobWorkingTimeText"			column="JOB_WORKING_TIME_TEXT" />
+		
+		<result property="jobLunchTimeStart"			column="JOB_LUNCH_TIME_START" />
+		<result property="jobLunchTimeEnd"				column="JOB_LUNCH_TIME_END" />
+		
+		<result property="hrOfficerName"			column="HR_OFFICER_NAME" />
+		<result property="hrTelNo"					column="HR_TEL_NO" />
+		<result property="hrEmail"					column="HR_EMAIL" />
+		
+		<result property="retirementPayType"		column="RETIREMENT_PAY_TYPE" />
+		<result property="retirementPay"			column="RETIREMENT_PAY" />
+		
+	    <result property="attrJson"					column="ATTR_JSON" />
+	    
+	    <result property="hashTagJson"				column="HASH_TAG_JSON" />	   
+	    
+	     
+	    <result property="applyDt"					column="APPLY_DT" />	<!-- 구직자가 지원한 공고를 보는 경우에, 공고지원일자 -->
+	    <result property="offerDt"					column="OFFER_DT" />	<!-- 병원이 구직자에게 면접제안을 한 경우, 구직자가 이러한 공고들을 조회하는 경우에 사용되는 면접제안일자 --> 
+	    
+	    
+	    <association property="hospital" resultMap="mapHospital" />
+	</resultMap>
+	
+	<!-- 회원 정보 MAP -->
+	<resultMap id="mapUser" type="dentiq2.api.model.User">
+		<id property="userId"					column="USER_ID" />
+		
+		<result property="email"					column="EMAIL" />
+		<!-- <result property="password"					column="PASSWORD" /> -->
+		<result property="userType"					column="USER_TYPE" />
+		<result property="bizRegNo"					column="BIZ_REG_NO" />
+		<result property="useYn"					column="USE_YN" />
+		
+		<result property="keepingLoginType"			column="KEEPING_LOGIN_TYPE" />
+		<result property="eulaVer"					column="EULA_VER" />
+		<result property="cupiVer"					column="CUPI_VER" />
+		
+		<result property="agreementNoticeNewsYn"	column="AGREEMENT_NOTICE_NEWS_YN" />
+		<result property="agreementHiringNewsYn"	column="AGREEMENT_HIRING_NEWS_YN" />
+		<result property="agreementEventYn"			column="AGREEMENT_EVENT_YN" />
+		<result property="agreementAdYn"			column="AGREEMENT_AD_YN" />
+		
+		<result property="hospitalId"				column="HOSPITAL_ID" />
+	</resultMap>
+	
+	<!-- 개인 회원 정보 MAP -->
+	<resultMap id="mapJobSeekerUser" type="dentiq2.api.model.JobSeekerUser" extends="mapUser">
+		<result property="name"				column="NAME" />
+		<result property="telNo"			column="TEL_NO" />
+		<result property="birthday"			column="BIRTHDAY" />
+		<result property="gender"			column="GENDER" />
+		
+		<association property="location"			resultMap="mapLocation" />		
+	</resultMap>
+	
+	<!-- 병원 회원 정보 MAP -->
+	<resultMap id="mapHospitalUser" type="dentiq2.api.model.HospitalUser" extends="mapUser">		
+		<association property="hospital"			resultMap="mapHospital" />
+	</resultMap>
+	
+		
+	
+	<resultMap id="mapResume" type="dentiq2.api.model.Resume" >
+		<id property="resumeId"						column="RESUME_ID" />
+		
+		<result property="userId"					column="USER_ID" />
+		<result property="title"					column="TITLE" />
+		<result property="attrJson"					column="ATTR_JSON" />
+		<result property="salaryWanted"				column="SALARY_WANTED" />
+		<result property="salaryWantedText"			column="SALARY_WANTED_TEXT" />
+		<result property="roleWanted"				column="ROLE_WANTED" />
+		<result property="roleWantedText"			column="ROLE_WANTED_TEXT" />
+		<result property="applyLocationCodeJson"	column="APPLY_LOCATION_CODE_JSON" />
+		<result property="eduLevel"					column="EDU_LEVEL" />
+		<result property="eduStatus"				column="EDU_STATUS" />
+		<result property="eduSchoolName"			column="EDU_SCHOOL_NAME" />
+		<result property="eduMajor"					column="EDU_MAJOR" />
+		<result property="eduStartYYYYMM"			column="EDU_START_YYYYMM" />
+		<result property="eduEndYYYYMM"				column="EDU_END_YYYYMM" />
+		<result property="careerJson"				column="CAREER_JSON" />
+		<result property="licenceJson"				column="LICENCE_JSON" />
+		<result property="confirmRecommendation"	column="CONFIRM_RECOMMENDATION" />
+		<result property="content"					column="CONTENT" />
+		<result property="regDt"					column="REG_DT" />
+		<result property="lastModDt"				column="LAST_MOD_DT" />
+		
+		<result property="openYn"					column="OPEN_YN" />
+		
+		
+		<result property="appliedJobAdId"			column="JOB_AD_ID" />		<!-- 나중에 JSON으로 변경해야 하지 않을까? -->
+		<result property="appliedDt"				column="APPLY_DT" />		<!-- 나중에 JSON으로 변경해야 하지 않을까? -->	
+		
+		
+				
+		<association property="user"				resultMap="mapJobSeekerUser" />
+	</resultMap>
+	
+	
+	
+	<!-- ============================================================================================= -->
+	
+	<!-- **********************************************************************************************************************
+	/*                                                                                                                        */
+	/*                                                  공고 정보                                                             */
+	/*                                                                                                                        */
+	/*********************************************************************************************************************** -->
+	
+	
+	<insert id="createJobAd" useGeneratedKeys="true" keyProperty="jobAdId" parameterType="dentiq2.api.model.JobAd">
+		insert into JOB_AD
+			(
+				AD_STATUS, AD_TYPE, HOSPITAL_ID,
+				TITLE, AD_REG_DATE, AD_REG_TIME, 
+				AD_OPEN_DATE, AD_OPEN_TIME, AD_CLOSE_DATE, AD_CLOSE_TIME,
+				HIRING_TERM_TYPE, 
+				HIRING_START_DATE, HIRING_START_TIME, HIRING_END_DATE, HIRING_END_TIME,
+				APPLY_WAY_JSON, WORK_DESC, HIRING_CNT, SALARY_TYPE, SALARY_TEXT,
+				HIRING_ROLE_TYPE, HIRING_ROLE_TEXT, EDU_LEVEL, EXP_TYPE, LICENSE_TEXT,
+				JOB_WORKING_DAY, JOB_WORKING_TIME_WEEKDAY_START, JOB_WORKING_TIME_WEEKDAY_END, JOB_WORKING_TIME_WEEKEND_START, JOB_WORKING_TIME_WEEKEND_END, JOB_WORKING_TIME_TEXT,
+				JOB_LUNCH_TIME_START, JOB_LUNCH_TIME_END,
+				HR_OFFICER_NAME, HR_TEL_NO, HR_EMAIL,
+				RETIREMENT_PAY_TYPE, RETIREMENT_PAY,
+				ATTR_JSON
+			)
+		values
+			(
+				'A', '1', #{hospitalId},
+				#{title}, date_format(now(), '%Y%m%d'), date_format(now(), '%H%i%S'), 
+				null, '000000', null, '235959',
+				#{hiringTermType}, 
+				#{hiringStartDate}, '000000', #{hiringEndDate}, '235959',
+				#{applyWayJson}, #{workDesc}, #{hiringCnt}, #{salaryType}, #{salaryText},
+				#{hiringRoleType}, #{hiringRoleText}, #{eduLevel}, #{expType}, #{licenseText},
+				#{jobWorkingDay}, #{jobWorkingTimeWeekdayStart}, #{jobWorkingTimeWeekdayEnd}, #{jobWorkingTimeWeekendStart}, #{jobWorkingTimeWeekendEnd}, #{jobWorkingTimeText},
+				#{jobLunchTimeStart}, #{jobLunchTimeEnd},
+				#{hrOfficerName}, #{hrTelNo}, #{hrEmail},
+				#{retirementPayType}, #{retirementPay},
+				#{attrJson}
+			)
+	</insert>
+	
+	<!--  register_jobad.html에서 오는 수정 처리 : 병원 ID 등은 수정하지 않는다. -->
+	<update id="updateJobAdBasic" parameterType="dentiq2.api.model.JobAd">
+		update JOB_AD set
+				TITLE=#{title},
+				HIRING_TERM_TYPE=#{hiringTermType}, 
+				HIRING_START_DATE=#{hiringStartDate}, HIRING_START_TIME=#{hiringStartTime}, HIRING_END_DATE=#{hiringEndDate}, HIRING_END_TIME=#{hiringEndTime},
+				APPLY_WAY_JSON=#{applyWayJson}, WORK_DESC=#{workDesc}, HIRING_CNT=#{hiringCnt}, SALARY_TYPE=#{salaryType}, SALARY_TEXT=#{salaryText},
+				HIRING_ROLE_TYPE=#{hiringRoleType}, HIRING_ROLE_TEXT=#{hiringRoleText}, EDU_LEVEL=#{eduLevel}, EXP_TYPE=#{expType}, LICENSE_TEXT=#{licenseText},
+				JOB_WORKING_DAY=#{jobWorkingDay},
+				JOB_WORKING_TIME_WEEKDAY_START=#{jobWorkingTimeWeekdayStart}, JOB_WORKING_TIME_WEEKDAY_END=#{jobWorkingTimeWeekdayEnd}, 
+				JOB_WORKING_TIME_WEEKEND_START=#{jobWorkingTimeWeekendStart}, JOB_WORKING_TIME_WEEKEND_END=#{jobWorkingTimeWeekendEnd}, 
+				JOB_WORKING_TIME_TEXT=#{jobWorkingTimeText},
+				JOB_LUNCH_TIME_START=#{jobLunchTimeStart}, JOB_LUNCH_TIME_END=#{jobLunchTimeEnd},
+				HR_OFFICER_NAME=#{hrOfficerName}, HR_TEL_NO=#{hrTelNo}, HR_EMAIL=#{hrEmail},
+				ATTR_JSON=#{attrJson}
+		
+		where JOB_AD_ID=#{jobAdId}
+	</update>
+	
+	<delete id="deleteJobAd">
+		update JOB_AD set USE_YN='N' where JOB_AD_ID=#{jobAdId}
+	</delete>
+	
+	<select id="getJobAdById" resultMap="mapJobAd">
+        select * from JOB_AD where JOB_AD_ID = #{jobAdId}
+    </select>
+    
+    <select id="getJobAdFullyById" resultMap="mapJobAd">
+    	select A.*, H.* from JOB_AD A, HOSPITAL H where A.JOB_AD_ID=#{jobAdId} and A.HOSPITAL_ID=H.HOSPITAL_ID
+    </select>
+    
+    
+    
+    <!-- 
+    	1. 전체 시도의 카운팅
+    	2. 특정 시도에서 소속 시구의 카운팅
+    	3. 관심지역 등 ==> 전체 BASE(location)은 할 필요 없고, 특정 시도들 + 특정 시구들
+     -->
+	
+	<!-- 전체 시도의 요약 
+	<select id="summaryWholeOLD" resultType="dentiq2.api.model.LocationCounterOLD">
+		select L.LOCATION_CODE, L.SIDO_CODE, L.SIDO_NAME, L.SIGU_CODE, L.SIGU_NAME, A.AD_TYPE, IFNULL(A.CNT,0) as CNT
+		from 
+			(
+				select LOCATION_CODE, LOCATION_TYPE, SIDO_CODE, SIGU_CODE, SIDO_NAME, SIGU_NAME from LOCATION_CODE where LOCATION_TYPE='1'
+			) L
+		left join
+			(
+				select SIDO_CODE, AD_TYPE, count(1) as CNT
+				from JOB_AD_LIST_VIEW
+				where 1=1
+					<include refid="refJobAdAttr"></include>
+				group by SIDO_CODE, AD_TYPE
+			) A
+		on L.SIDO_CODE=A.SIDO_CODE;
+	</select> -->
+	<select id="summaryWhole" resultType="dentiq2.api.model.LocationSummary">
+		select L.LOCATION_CODE, L.LOCATION_TYPE, L.SIDO_CODE, L.SIDO_NAME, L.SIGU_CODE, L.SIGU_NAME, A.AD_TYPE_LIST, A.CNT_LIST
+		from 
+			(
+				select LOCATION_CODE, LOCATION_TYPE, SIDO_CODE, SIGU_CODE, SIDO_NAME, SIGU_NAME from LOCATION_CODE where LOCATION_TYPE='1'
+			) L
+		left join
+			(
+				select SIDO_CODE, group_concat(AD_TYPE) as ad_type_list, group_concat(CNT) as cnt_list
+				from (
+						select SIDO_CODE, AD_TYPE, count(1) as CNT
+						from JOB_AD_LIST_VIEW
+						where 1=1
+							<include refid="refJobAdAttr"></include>
+						group by SIDO_CODE, AD_TYPE
+				) TEMP
+				group by SIDO_CODE
+			) A
+		on L.SIDO_CODE=A.SIDO_CODE;
+	</select>
+	
+	<!-- 특정 시도의 요약 (특정 시도에서 소속 시구들에 대한 카운팅) 
+	<select id="summarySpecificSidoOLD" resultType="dentiq2.api.model.LocationCounterOLD">
+		select L.LOCATION_CODE, L.SIDO_CODE, L.SIDO_NAME, L.SIGU_CODE, L.SIGU_NAME, A.AD_TYPE, IFNULL(A.CNT,0) as CNT
+		from 
+			(
+				select LOCATION_CODE, LOCATION_TYPE, SIDO_CODE, SIGU_CODE, SIDO_NAME, SIGU_NAME from LOCATION_CODE where LOCATION_TYPE='2'
+					and SIDO_CODE=#{sidoCode}
+			) L
+		left join
+			(
+				select SIGU_CODE, AD_TYPE, count(1) as CNT
+				from JOB_AD_LIST_VIEW
+				where 1=1
+					<include refid="refJobAdAttr"></include>
+					and SIDO_CODE=#{sidoCode}
+				group by SIGU_CODE, AD_TYPE
+			) A
+		on L.SIGU_CODE=A.SIGU_CODE
+	</select> -->
+	<select id="summarySpecificSido" resultType="dentiq2.api.model.LocationSummary">
+		select L.LOCATION_CODE, L.LOCATION_TYPE, L.SIDO_CODE, L.SIDO_NAME, L.SIGU_CODE, L.SIGU_NAME, A.AD_TYPE_LIST, A.CNT_LIST
+		from 
+			(
+				select LOCATION_CODE, LOCATION_TYPE, SIDO_CODE, SIGU_CODE, SIDO_NAME, SIGU_NAME from LOCATION_CODE where LOCATION_TYPE='2'
+					and SIDO_CODE=#{sidoCode}
+			) L
+		left join
+			(
+				select SIGU_CODE, group_concat(AD_TYPE) as ad_type_list, group_concat(CNT) as cnt_list
+				from (
+						select SIGU_CODE, AD_TYPE, count(1) as CNT
+						from JOB_AD_LIST_VIEW
+						where 1=1
+							<include refid="refJobAdAttr"></include>
+							and SIDO_CODE=#{sidoCode}
+						group by SIGU_CODE, AD_TYPE
+				) TEMP
+				group by SIGU_CODE
+			) A
+		on L.SIGU_CODE=A.SIGU_CODE
+	</select>
+	
+	
+	<!-- 관심지역 Summary : 관심지역은 시도 n개, 시구 n개가 다 가능함. SQL을 시도별, 시구별 날리고 조합해야 함 -->
+	
+	
+	<!-- 관심지역 Summary용도 - 시구단위 only : 위의 것을 참고 -->
+	<select id="summarySpecificSiguListByLocationCode" resultType="dentiq2.api.model.LocationSummary">
+		select L.LOCATION_CODE, L.LOCATION_TYPE, L.SIDO_CODE, L.SIDO_NAME, L.SIGU_CODE, L.SIGU_NAME, A.AD_TYPE_LIST, A.CNT_LIST
+		from 
+			(
+				select LOCATION_CODE, LOCATION_TYPE, SIDO_CODE, SIGU_CODE, SIDO_NAME, SIGU_NAME from LOCATION_CODE where LOCATION_TYPE='2'
+							<if test = "locationCodeListAsSiguCode != null">
+								<trim prefix=" and LOCATION_CODE in">
+									<foreach item="locationCode" collection="locationCodeListAsSiguCode" open="(" separator="," close=")">
+						        		#{locationCode}
+									</foreach>
+								</trim>
+							</if>
+			) L
+		left join
+			(
+				select LOCATION_CODE, group_concat(AD_TYPE) as ad_type_list, group_concat(CNT) as cnt_list
+				from (
+						select LOCATION_CODE, AD_TYPE, count(1) as CNT
+						from JOB_AD_LIST_VIEW
+						where 1=1
+							<include refid="refJobAdAttr"></include>
+							<if test = "locationCodeListAsSiguCode != null">
+								<trim prefix=" and LOCATION_CODE in">
+									<foreach item="locationCode" collection="locationCodeListAsSiguCode" open="(" separator="," close=")">
+						        		#{locationCode}
+									</foreach>
+								</trim>
+							</if>
+						group by LOCATION_CODE, AD_TYPE
+				) TEMP
+				group by LOCATION_CODE
+			) A
+		on L.LOCATION_CODE=A.LOCATION_CODE
+	</select>
+	
+	<!-- 우리동네 Summary용도 : 우리동네는 **시구코드 1개** 임.  우리동네는 BASE가 표시되면 안됨
+			사용시에는 먼저 우리동네 코드를 확인(Query)하고 그 다음에 이 Query를 실행할 것 -->
+	<select id="summarySpecificSigu" resultType="dentiq2.api.model.LocationSummary">
+		select L.LOCATION_CODE, L.LOCATION_TYPE, L.SIDO_CODE, L.SIDO_NAME, L.SIGU_CODE, L.SIGU_NAME, A.AD_TYPE_LIST, A.CNT_LIST
+		from 
+			(
+				select LOCATION_CODE, LOCATION_TYPE, SIDO_CODE, SIGU_CODE, SIDO_NAME, SIGU_NAME from LOCATION_CODE where LOCATION_TYPE='2'
+					and SIGU_CODE=#{siguCode}
+			) L
+		left join
+			(
+				select SIGU_CODE, group_concat(AD_TYPE) as ad_type_list, group_concat(CNT) as cnt_list
+				from (
+						select SIGU_CODE, AD_TYPE, count(1) as CNT
+						from JOB_AD_LIST_VIEW
+						where 1=1
+							<include refid="refJobAdAttr"></include>
+							and SIGU_CODE=#{siguCode}
+						group by AD_TYPE
+				) TEMP
+				<!-- 단일 행 Query여서 group by SIGU_CODE 뺐음 -->
+			) A
+		on L.SIGU_CODE=A.SIGU_CODE
+	</select>
+	
+	
+	
+	<!-- 
+	<select id="countWholeBySidoCode" resultType="dentiq2.api.model.LocationCounter">
+		select L.LOCATION_CODE, L.SIDO_CODE, L.SIDO_NAME, L.SIGU_CODE, L.SIGU_NAME, IFNULL(A.CNT,0) as CNT
+		from 
+			(
+				select LOCATION_CODE, LOCATION_TYPE, SIDO_CODE, SIGU_CODE, SIDO_NAME, SIGU_NAME from LOCATION_CODE where LOCATION_TYPE='1'
+			) L
+		left join
+			(
+				select LOCATION_CODE, SIDO_CODE, count(1) as CNT
+				from JOB_AD_LIST_VIEW
+				where 1=1
+					<include refid="refJobAdAttr"></include>
+					
+					<if test = "sidoCodeList != null">
+						<trim prefix=" and SIDO_CODE in">
+							<foreach item="sidoCode" collection="sidoCodeList" open="(" separator="," close=")">
+				        		#{sidoCode}
+							</foreach>
+						</trim>
+					</if>
+				group by SIDO_CODE
+			) A
+		on L.SIDO_CODE=A.SIDO_CODE;
+	</select>
+	
+	<select id="countBySiguCode" resultType="dentiq2.api.model.LocationCounter">
+		select L.LOCATION_CODE, L.SIDO_CODE, L.SIDO_NAME, L.SIGU_CODE, L.SIGU_NAME, IFNULL(A.CNT,0) as CNT
+		from 
+			(
+				select LOCATION_CODE, LOCATION_TYPE, SIDO_CODE, SIGU_CODE, SIDO_NAME, SIGU_NAME from LOCATION_CODE where LOCATION_TYPE='2'
+			) L
+		left join
+			(
+				select LOCATION_CODE, SIDO_CODE, SIGU_CODE, count(1) as CNT
+				from JOB_AD_LIST_VIEW
+				where 1=1
+					<include refid="refJobAdAttr"></include>
+								
+					<if test = "siguCodeList != null">
+						<trim prefix=" and SIGU_CODE in">
+							<foreach item="siguCode" collection="siguCodeList" open="(" separator="," close=")">
+				        		#{siguCode}
+							</foreach>
+						</trim>
+					</if>
+				group by SIGU_CODE
+			) A
+		on L.SIGU_CODE=A.SIGU_CODE
+	</select>
+	-->
+	
+	<select id="listJobAd" resultMap="mapJobAd">
+		select A.* from JOB_AD_LIST_VIEW A
+		where 1=1
+			
+			<include refid="refJobAdAttr"></include>
+			
+			<!-- 시도 또는 시구로 조회 -->
+			<if test="sidoCodeList !=null || siguCodeList != null">
+				<trim prefix=" and ( " suffix=" ) ">
+					<if test = "sidoCodeList != null">
+						<trim prefix="SIDO_CODE in">
+							<foreach item="sidoCode" collection="sidoCodeList" open="(" separator="," close=")">
+				        		#{sidoCode}
+							</foreach>
+						</trim>
+					</if>
+					
+					<if test="sidoCodeList != null and siguCodeList != null">
+						or
+					</if>
+					
+					<if test = "siguCodeList != null">
+						<trim prefix="SIGU_CODE in">
+							<foreach item="siguCode" collection="siguCodeList" open="(" separator="," close=")">
+				        		#{siguCode}
+							</foreach>
+						</trim>
+					</if>
+				</trim>
+			</if>
+			
+			<!-- 공고 유형(1:일반, 2:프리미어)로 조회 -->
+			<if test="adType != null">
+				and AD_TYPE=#{adType}
+			</if>
+			
+		<!-- order by JOB_AD_ID desc, MEMBERSHIP_TYPE desc, HIRING_TERM_TYPE desc, HIRING_END_DATE desc -->
+		order by JOB_AD_ID desc
+		
+		<if test="startIndexOnPage !=null and itemCntPerPage != null">
+			limit #{startIndexOnPage}, #{itemCntPerPage}
+		</if>
+		<if test="startIndexOnPage ==null or itemCntPerPage == null">
+			limit 0, 10
+		</if>
+	</select>
+	
+	
+	<sql id="refJobAdAttr">
+		<!-- 공고 속성 조회 : IN 조건 활용 -->		
+		<if test="jobAttrGroupList !=null">
+			<trim prefix="and JOB_AD_ID in  ( select distinct JOB_AD_ID from ( " prefixOverrides="AND |OR"  suffix=" ) TEMP_TABLE)">
+				<foreach item="jobAttrGroup" collection="jobAttrGroupList" open="(" separator=" intersect " close=")">
+					
+					select distinct JOB_AD_ID from JOB_AD_ATTR where ATTR_GROUP_ID=#{jobAttrGroup.groupId}
+					<if test="jobAttrGroup.attrList != null">
+						<trim prefix=" and ATTR_CODE_ID in " prefixOverrides="AND |OR ">
+							<foreach item="attr" collection="jobAttrGroup.attrList" open="(" separator="," close=")">
+								#{attr.codeId}
+							</foreach>
+						</trim>
+					</if>
+					
+				</foreach>
+			</trim>
+		</if>
+	</sql>
+	
+    
+    
+    
+    
+     
+    
+    
+    <!-- 공고 속성 변경 시 사용함. delete와 insert는 한 묶음임. JOB_AD_ATTR 테이블은 검색 조건일 뿐, 단독으로 select하지는 않을 것임 -->
+    <insert id="insertJobAdAttrAll">
+		insert into JOB_AD_ATTR
+			(JOB_AD_ID, ATTR_CODE_ID, ATTR_GROUP_ID)
+		values
+			<foreach item="attr" collection="jobAttrList" separator=",">
+				( #{jobAdId}, #{attr.codeId}, #{attr.groupId} )
+			</foreach>
+	</insert>
+	
+	
+	
+	<!-- **********************************************************************************************************************
+	/*                                                                                                                        */
+	/*                                                  이력서 정보                                                           */
+	/*                                                                                                                        */
+	/*********************************************************************************************************************** -->
+	
+	
+	<insert id="createResume" useGeneratedKeys="true" keyProperty="resumeId" parameterType="dentiq2.api.model.Resume">
+		insert into USER_RESUME (
+			USER_ID, TITLE,
+			ATTR_JSON,
+			SALARY_WANTED, SALARY_WANTED_TEXT,
+			ROLE_WANTED, ROLE_WANTED_TEXT,
+			APPLY_LOCATION_CODE_JSON,
+			EDU_LEVEL, EDU_STATUS, EDU_SCHOOL_NAME, EDU_MAJOR, EDU_START_YYYYMM, EDU_END_YYYYMM,
+			CAREER_JSON, LICENSE_JSON,
+			CONFIRM_RECOMMENDATION,
+			CONTENT,
+			USE_YN
+		) values (
+			#{userId}, #{title}, 
+			#{attrJson},
+			#{salaryWanted}, #{salaryWantedText},
+			#{roleWanted}, #{roleWantedText},
+			#{applyLocationCodeJson},
+			#{eduLevel}, #{eduStatus}, #{eduSchoolName}, #{eduMajor}, #{eduStartYYYYMM}, #{eduEndYYYYMM},			
+			#{careerJson}, #{licenseJson},
+			#{confirmRecommendation},
+			#{content},
+			'Y'
+		)
+	</insert>
+	
+	<!--  <update id="updateResumeByUserId" parameterType="dentiq2.api.model.Resume"> -->
+	<update id="updateResume" parameterType="dentiq2.api.model.Resume">
+		update USER_RESUME set
+			TITLE=#{title},
+			ATTR_JSON=#{attrJson},
+			SALARY_WANTED=#{salaryWanted}, SALARY_WANTED_TEXT=#{salaryWantedText},
+			ROLE_WANTED=#{roleWanted}, ROLE_WANTED_TEXT=#{roleWantedText},
+			APPLY_LOCATION_CODE_JSON=#{applyLocationCodeJson},
+			EDU_LEVEL=#{eduLevel}, EDU_STATUS=#{eduStatus}, EDU_SCHOOL_NAME=#{eduSchoolName}, EDU_MAJOR=#{eduMajor}, EDU_START_YYYYMM=#{eduStartYYYYMM}, EDU_END_YYYYMM=#{eduEndYYYYMM},
+			CAREER_JSON=#{careerJson}, LICENSE_JSON=#{licenseJson},
+			CONFIRM_RECOMMENDATION=#{confirmRecommendation},
+			CONTENT=#{content}
+		where RESUME_ID=#{resumeId} and USER_ID=#{userId}
+	</update>
+	
+	<!-- 이력서 속성 변경 시 사용함. delete와 insert는 한 묶음임. USER_RESUME_ATTR 테이블은 검색 조건일 뿐, 단독으로 select하지는 않을 것임 -->
+	<insert id="insertResumeAttrAll">
+		insert into USER_RESUME_ATTR
+			(RESUME_ID, ATTR_CODE_ID, ATTR_GROUP_ID)
+		values
+			<foreach item="attr" collection="resumeAttrList" separator=",">
+				( #{resumeId}, #{attr.codeId}, #{attr.groupId} )
+			</foreach>
+	</insert>
+	
+	<!-- 이력서 지원 지역 변경 시 사용함. delete와 insert는 한 묶음임. USER_RESUME_APPLY_LOCATION 테이블은 검색 조건일 뿐, 단독으로 select하지는 않을 것임 -->
+	<insert id="insertResumeLocationAll">
+		insert into USER_RESUME_APPLY_LOCATION
+			(RESUME_ID, LOCATION_CODE)
+		values
+			<foreach item="locationCode" collection="resumeApplyLocationCodeList" separator=",">
+				( #{resumeId}, #{locationCode} )
+			</foreach>
+	</insert>
+	
+	
+	<select id="getResumeById" resultMap="mapResume">
+		select * from USER_RESUME_VIEW where RESUME_ID=#{resumeId}
+	</select>
+	
+	<select id="getResumeByUserId" resultMap="mapResume">
+		select * from USER_RESUME_VIEW where USER_ID=#{userId}
+	</select>
+	
+	
+	
+	
+	
+	<!-- **********************************************************************************************************************
+	/*                                                                                                                        */
+	/*                                                  병원 정보                                                             */
+	/*                                                                                                                        */
+	/*********************************************************************************************************************** -->
+	
+	
+	<!-- 2018.04.03 이주현 추가. UTMK_POINT 컬럼 추가 -->
+	<insert id="createHospital" useGeneratedKeys="true" keyProperty="hospitalId" parameterType="dentiq2.api.model.Hospital">
+		insert into HOSPITAL (
+			BIZ_REG_NO, BIZ_REG_NAME, Y_KIHO, USER_ID, HOSPITAL_NAME, CL_CODE, CL_CODE_NAME, 
+			
+			LOCATION_CODE, SIDO_CODE, SIDO_NAME, SIGU_CODE, SIGU_NAME, 
+			ADDR_MAIN, ADDR_DETAIL, 
+			JIBUN_ADDR, ADM_CD, RN_MGT_SN, UDRT_YN, BULD_MNNM, BULD_SLNO, BD_NM, EMD_NM, 
+			ENT_X, ENT_Y, UTMK_POINT, ZIP_NO,
+			LAT_LON_X, LAT_LON_Y,
+			
+			HOSPITAL_TEL_NO, HOSPITAL_URL, HOSPITAL_EMAIL, 
+			CEO_NAME, EST_DATE, TDR_CNT, GDR_CNT, IDR_CNT, RDR_CNT, SDR_CNT,
+			HOSPITAL_TYPE_CODE, HOSPITAL_TYPE_TEXT,			
+			HOLIDAY_JSON, HOLIDAY_TEXT, WORKING_TIME_WEEKDAY_START, WORKING_TIME_WEEKDAY_END, WORKING_TIME_WEEKEND_START, WORKING_TIME_WEEKEND_END, WORKING_TIME_TEXT, LUNCH_TIME_START, LUNCH_TIME_END, 
+			CLINIC_SUBJECT, TOTAL_MEMBER_CNT,
+			DEFAULT_HR_TEL_NO, DEFAULT_HR_OFFICER_NAME, DEFAULT_HR_EMAIL
+		)
+		values (
+			#{bizRegNo}, #{bizRegName}, #{yKiho}, #{userId}, #{hospitalName}, #{clCode}, #{clCodeName}, 
+			
+			#{location.locationCode}, #{location.sidoCode}, #{location.sidoName}, #{location.siguCode}, #{location.siguName},
+			#{location.addrMain}, #{location.addrDetail}, 
+			#{location.jibunAddr}, #{location.admCd}, #{location.rnMgtSn}, #{location.udrtYn}, #{location.buldMnnm}, #{location.buldSlno}, #{location.bdNm}, #{location.emdNm}, 
+			#{location.entX}, #{location.entY}, POINT(#{location.entX}, #{location.entY}), #{location.zipNo},
+			#{location.latLonX}, #{location.latLonY},
+			
+			#{hospitalTelNo}, #{hospitalUrl}, #{hospitalEmail},
+			#{ceoName}, #{estDate}, #{tdrCnt}, #{gdrCnt}, #{idrCnt}, #{rdrCnt}, #{sdrCnt},
+			#{hospitalTypeCode}, #{hospitalTypeText},
+			#{holidayJson}, #{holidayText}, #{workingTimeWeekdayStart}, #{workingTimeWeekdayEnd}, #{workingTimeWeekendStart}, #{workingTimeWeekendEnd}, #{workingTimeText}, #{lunchTimeStart}, #{lunchTimeEnd},
+			#{clinicSubject}, #{totalMemberCnt},
+			#{defaultHrTelNo}, #{defaultHrOfficerName}, #{defaultHrEmail}
+		)
+	</insert>
+	
+	<!--  병원정보 수정 : 사업자번호, 사업장명, 요양기관암호화번호, 사용자ID, 병원명, 종별코드는 수정 불가 -->
+	<!-- 2018.04.03 이주현 추가. UTMK_POINT 컬럼 추가 -->
+	<update id="updateHospital" parameterType="dentiq2.api.model.Hospital">
+		update HOSPITAL
+		set
+			<!-- ID, BIZ_REG_NO, BIZ_REG_NAME, Y_KIHO, USER_ID, NAME, CL_CODE, CL_CODE_NAME, -->
+			BIZ_REG_NAME=#{bizRegName}, HOSPITAL_NAME=#{hospitalName},
+			
+			LOCATION_CODE=#{location.locationCode}, SIDO_CODE=#{location.sidoCode}, SIDO_NAME=#{location.sidoName}, SIGU_CODE=#{location.siguCode}, SIGU_NAME=#{location.siguName}, 
+			ADDR_MAIN=#{location.addrMain}, ADDR_DETAIL=#{location.addrDetail}, 
+			JIBUN_ADDR=#{location.jibunAddr}, ADM_CD=#{location.admCd}, RN_MGT_SN=#{location.rnMgtSn}, UDRT_YN=#{location.udrtYn}, BULD_MNNM=#{location.buldMnnm}, BULD_SLNO=#{location.buldSlno}, BD_NM=#{location.bdNm}, EMD_NM=#{location.emdNm}, 
+			ENT_X=#{location.entX}, ENT_Y=#{location.entY}, UTMK_POINT=POINT(#{location.entX}, #{location.entY}), ZIP_NO=#{location.zipNo},
+			LAT_LON_X=#{location.latLonX}, LAT_LON_Y=#{location.latLonY},
+			
+			HOSPITAL_TEL_NO=#{hospitalTelNo}, HOSPITAL_URL=#{hospitalUrl}, HOSPITAL_EMAIL=#{hospitalEmail},
+			CEO_NAME=#{ceoName}, EST_DATE=#{estDate}, TDR_CNT=#{tdrCnt}, GDR_CNT=#{gdrCnt}, IDR_CNT=#{idrCnt}, RDR_CNT=#{rdrCnt}, SDR_CNT=#{sdrCnt},
+			HOSPITAL_TYPE_CODE=#{hospitalTypeCode}, HOSPITAL_TYPE_TEXT=#{hospitalTypeText},
+			HOLIDAY_JSON=#{holidayJson}, HOLIDAY_TEXT=#{holidayText},
+			WORKING_TIME_WEEKDAY_START=#{workingTimeWeekdayStart}, WORKING_TIME_WEEKDAY_END=#{workingTimeWeekdayEnd}, 
+			WORKING_TIME_WEEKEND_START=#{workingTimeWeekendStart}, WORKING_TIME_WEEKEND_END=#{workingTimeWeekendEnd}, WORKING_TIME_TEXT=#{workingTimeText},
+			LUNCH_TIME_START=#{lunchTimeStart}, LUNCH_TIME_END=#{lunchTimeEnd},
+			CLINIC_SUBJECT=#{clinicSubject}, TOTAL_MEMBER_CNT=#{totalMemberCnt},			
+			DEFAULT_HR_TEL_NO=#{defaultHrTelNo}, DEFAULT_HR_OFFICER_NAME=#{defaultHrOfficerName}, DEFAULT_HR_EMAIL=#{defaultHrEmail}
+		where HOSPITAL_ID=#{hospitalId}
+	</update>
+	
+	<select id="getHospitalByHospitalId" resultMap="mapHospital">
+        select * from HOSPITAL where HOSPITAL_ID=#{hospitalId}
+    </select>
+    <select id="getHospitalByHospitalUserId" resultMap="mapHospital">
+        select * from HOSPITAL where USER_ID=#{userId}
+    </select>
+    <select id="getHospitalBasicInfoByUserId" resultMap="mapHospital"> <!-- 주의 : 사용자가 n명인 경우, 여기서의 email은 사용자의 email이 아니고 병원의 대표 email임 -->
+        select HOSPITAL_ID, HOSPITAL_EMAIL, HOSPITAL_NAME from HOSPITAL where USER_ID=#{userId}
+    </select>
+	
+	
+	
+	
+	<!-- **********************************************************************************************************************
+	/*                                                                                                                        */
+	/*                                                병원 회원 활동                                                          */
+	/*                                                                                                                        */
+	/*********************************************************************************************************************** -->
+	
+	<select id="listJobAdOfHospital" resultMap="mapJobAd">
+		select A.* from JOB_AD_LIST_VIEW A
+		where HOSPITAL_ID=#{hospitalId}
+	</select>
+	
+	<!-- 병원 ID로 해당 병원에 지원한 이력서를 리스팅 -->
+	<select id="listResumeApplied" resultMap="mapResume">
+		select A.JOB_AD_ID, A.APPLY_DT, R.* 
+		from
+			USER_APPLY A, USER_RESUME_VIEW R
+		where
+			A.USER_ID=R.USER_ID and
+			A.JOB_AD_ID in (
+				select JOB_AD_ID from JOB_AD_LIST_VIEW where HOSPITAL_ID=#{hospitalId}
+			)
+	</select>
+	
+	
+	<!--  병원이 스크랩한 이력서를 리스팅 -->
+	<select id="listResumeScrapped" resultMap="mapResume">
+		<!-- select R.*, true as scrapped_By_Hospital -->
+		select R.*
+		from USER_RESUME_VIEW R, HOSPITAL_SCRAPPED_RESUME H
+		where
+			R.RESUME_ID = H.RESUME_ID
+			and H.HOSPITAL_ID=#{hospitalId}
+	</select>
+	
+	
+	<!--  병원이 면접요청(offer)한 이력서를 리스팅 -->
+	<select id="listResumeOfferedByHospitalId" resultMap="mapResume">
+		<!-- select R.*, true as scrapped_By_Hospital -->
+		select R.*
+		from USER_RESUME_VIEW R, HOSPITAL_OFFER O, JOB_AD J
+		where
+			R.RESUME_ID = O.RESUME_ID
+			and J.HOSPITAL_ID=O.HOSPITAL_ID
+			and O.HOSPITAL_ID=#{hospitalId}
+	</select>
+	
+	
+	<!--  이력서 추천 -->
+	<select id="listResumeRecommended" resultMap="mapResume">
+		select *
+		from USER_RESUME_VIEW
+		where RESUME_ID in (
+			<!-- 이하의 결과는 중복된 ID를 리턴할 수 있음
+			    위의 문장에서 in 조건 외에 PRIOTY도 처리하여야 함 -->
+			select R_ID from (
+		
+				<!-- 우리 병원 공고를 스크랩한 이력서들의 ID를 추출 -->
+				(
+					select distinct R.RESUME_ID as R_ID, 1 as PRIOTY
+					from
+						USER_SCRAPPED_JOB_AD S, USER_RESUME_VIEW R
+					where
+						S.USER_ID=R.USER_ID
+						and S.JOB_AD_ID in (
+							select JOB_AD_ID from JOB_AD where HOSPITAL_ID=#{hospitalId}
+						)
+				)
+				
+				union
+				
+				<!-- 우리 병원의 지역(locationCode)와 희망근무지역이 일치하는 이력서들의 ID를 추출 (APPLY_LOCATION_CODE_JSON) -->
+				(
+					select distinct R.RESUME_ID as R_ID, 2 as PRIOTY
+					from
+						USER_RESUME_VIEW R
+					where
+						json_search(R.APPLY_LOCATION_CODE_JSON, 'one', (select LOCATION_CODE from HOSPITAL where HOSPITAL_ID=#{hospitalId}) ) is not null	
+						-- R.APPLY_LOCATION_CODE_JSON like concat('%', (select LOCATION_CODE from HOSPITAL where HOSPITAL_ID=1), '%')
+				)
+				
+				union
+				
+				<!-- 이력서의 희망근무지역이 특정 시구 전체일 때 일치하는 것 -->
+				(
+					select distinct R.RESUME_ID as R_ID, 3 as PROITY
+					from
+						USER_RESUME_VIEW R
+					where
+						json_search(R.APPLY_LOCATION_CODE_JSON, 'one', (select SIDO_CODE from HOSPITAL where HOSPITAL_ID=#{hospitalId}) ) is not null	
+				)
+				
+				-- TODO 집이 근처인 아이들
+				
+			) COND
+			order by PRIOTY
+		)
+	</select>
+	
+	
+	
+	
+	
+	<!-- **********************************************************************************************************************
+	/*                                                                                                                        */
+	/*                                                  회원 정보                                                             */
+	/*                                                                                                                        */
+	/*********************************************************************************************************************** -->
+	
+	<insert id="createUser" useGeneratedKeys="true" keyProperty="userId" parameterType="dentiq2.api.model.User">
+		insert into USER (
+					EMAIL, PASSWORD, USER_TYPE, BIZ_REG_NO, USE_YN,
+					KEEPING_LOGIN_TYPE, EULA_VER, CUPI_VER, 
+					AGREEMENT_NOTICE_NEWS_YN, AGREEMENT_HIRING_NEWS_YN, AGREEMENT_EVENT_YN, AGREEMENT_AD_YN
+				)
+		values (
+					#{email}, SHA1(#{password}), #{userType}, #{bizRegNo}, 'Y',
+					#{keepingLoginType}, #{eulaVer}, #{cupiVer},
+					#{agreementNoticeNewsYn}, #{agreementHiringNewsYn}, #{agreementEventYn}, #{agreementAdYn}
+				);
+	</insert>
+	
+	<update id="updateJobSeekerUserBasicInfo"> <!-- 2018.04.18 시도명(SIDO_NAME), 시구명(SIGU_NAME) 제거 -->
+		update USER set
+			NAME=#{name}, TEL_NO=#{telNo}, BIRTHDAY=#{birthday}, GENDER=#{gender},
+		
+			<!-- 이하는 updateUserLocation과 동일 -->
+			LOCATION_CODE=#{location.locationCode}, SIDO_CODE=#{location.sidoCode}, SIGU_CODE=#{location.siguCode},
+			ADDR_MAIN=#{location.addrMain}, ADDR_DETAIL=#{location.addrDetail}, 
+			JIBUN_ADDR=#{location.jibunAddr}, ADM_CD=#{location.admCd}, RN_MGT_SN=#{location.rnMgtSn}, UDRT_YN=#{location.udrtYn}, BULD_MNNM=#{location.buldMnnm}, BULD_SLNO=#{location.buldSlno}, BD_NM=#{location.bdNm}, EMD_NM=#{location.emdNm}, 
+			ENT_X=#{location.entX}, ENT_Y=#{location.entY}, UTMK_POINT=POINT(#{location.entX}, #{location.entY}), ZIP_NO=#{location.zipNo},
+			LAT_LON_X=#{location.latLonX}, LAT_LON_Y=#{location.latLonY}
+		where USER_ID=#{userId}
+	</update>
+		
+	<select id="getJobSeekerUserByUserId" resultMap="mapJobSeekerUser">
+		select * from USER where USER_ID=#{userId}
+	</select>
+	
+	<select id="getUserLocationByUserId" resultMap="mapLocation">
+		select * from USER where USER_ID=#{userId}
+	</select>
+	
+	<!-- 2018.04.03 이주현 추가. UTMK_POINT 컬럼 추가 --> <!-- 2018.04.18 시도명(SIDO_NAME), 시구명(SIGU_NAME) 제거 -->
+	<update id="updateUserLocation">		<!--  여기는 parameterType 쓰지 않음 -->
+		update USER set			
+			LOCATION_CODE=#{location.locationCode}, SIDO_CODE=#{location.sidoCode}, SIGU_CODE=#{location.siguCode}, 
+			ADDR_MAIN=#{location.addrMain}, ADDR_DETAIL=#{location.addrDetail}, 
+			JIBUN_ADDR=#{location.jibunAddr}, ADM_CD=#{location.admCd}, RN_MGT_SN=#{location.rnMgtSn}, UDRT_YN=#{location.udrtYn}, BULD_MNNM=#{location.buldMnnm}, BULD_SLNO=#{location.buldSlno}, BD_NM=#{location.bdNm}, EMD_NM=#{location.emdNm}, 
+			ENT_X=#{location.entX}, ENT_Y=#{location.entY}, UTMK_POINT=POINT(#{location.entX}, #{location.entY}), ZIP_NO=#{location.zipNo},
+			LAT_LON_X=#{location.latLonX}, LAT_LON_Y=#{location.latLonY}
+		where USER_ID=#{userId}
+	</update>
+	
+
+	
+	
+	
+	<!-- **********************************************************************************************************************
+	/*                                                                                                                        */
+	/*                                                구직자 활동                                                             */
+	/*                                                                                                                        */
+	/*********************************************************************************************************************** -->
+	
+    <insert id="insertInterestLocationAll">
+		insert into USER_INTEREST_LOCATION
+			(USER_ID, LOCATION_CODE)
+		values
+			<foreach item="locationCode" collection="locationCodeStrList" separator=",">
+				( #{userId}, #{locationCode} )
+			</foreach>
+	</insert>
+	
+	<select id="listScrappedJobAd" resultMap="mapJobAd">
+		select J.*, S.LAST_MOD_DT as LAST_MOD_DT
+		from USER_SCRAPPED_JOB_AD S, JOB_AD_LIST_VIEW J
+		where S.JOB_AD_ID=J.JOB_AD_ID and S.USER_ID=#{userId}
+		order by LAST_MOD_DT;
+	</select>
+		
+	
+	<select id="listInterestHospitalJobAd" resultMap="mapJobAd">
+		select J.*
+		from USER_INTEREST_HOSPITAL H, JOB_AD_LIST_VIEW J
+		where J.HOSPITAL_ID=H.HOSPITAL_ID and H.USER_ID=#{userId}
+	</select>
+	
+	<select id="listAppliedJobAd" resultMap="mapJobAd">
+		select J.*, UA.APPLY_DT as APPLY_DT
+		from USER_APPLY UA, JOB_AD_LIST_VIEW J
+		where UA.JOB_AD_ID=J.JOB_AD_ID and UA.USER_ID=#{userId}
+	</select>
+	
+	<!-- 
+	<select id="listOfferedJobAdByUserId" resultMap="mapJobAd">
+		select J.*, O.OFFER_DT
+		from HOSPITAL_OFFER O, JOB_AD_LIST_VIEW J
+		where O.JOB_AD_ID=J.JOB_AD_ID and O.USER_ID=#{userId}
+	</select>
+	-->
+	<select id="listOfferedJobAdByUserId" resultMap="mapJobAd">
+		select J.*, O.OFFER_DT
+		from
+			 JOB_AD_LIST_VIEW J, HOSPITAL_OFFER O, USER_RESUME R
+		where
+			O.JOB_AD_ID=J.JOB_AD_ID
+			and O.RESUME_ID=R.RESUME_ID
+			and	R.USER_ID=#{userId}
+	</select>
+	
+	
+	
+	
+	
+</mapper>
