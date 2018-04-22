@@ -1,5 +1,7 @@
 package dentiq2.api.controller;
 
+import java.util.List;
+
 import javax.servlet.http.HttpServletResponse;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -16,7 +18,10 @@ import dentiq2.api.ErrorCode;
 import dentiq2.api.LogicalException;
 import dentiq2.api.controller.JsonResponse;
 import dentiq2.api.mapper.CommonMapper;
+import dentiq2.api.model.JobAd;
+import dentiq2.api.model.JobAttrGroup;
 import dentiq2.api.model.User;
+import dentiq2.api.util.PageInfo;
 import dentiq2.api.util.UserSessionManager;
 
 @RestController
@@ -170,6 +175,26 @@ public class LoginController {
 		}
 		
 		return new ResponseEntity<JsonResponse<User>>(res, HttpStatus.CREATED);
+	}
+	
+	/* 사업자번호 중복 여부 확인 */
+	@RequestMapping(value="/checkBizRegNo/", method=RequestMethod.GET)
+	public ResponseEntity< JsonResponse< String > > listJobAd(
+			@RequestParam(value="bizRegNo",		required=true)		String bizRegNo
+			) {
+		
+		JsonResponse<String> res = new JsonResponse<String>();
+		try {
+			
+			int cnt = commonMapper.countUsersByBizRegNo(bizRegNo);
+			if ( cnt != 0 )	res.setResponse("FAIL");
+			else			res.setResponse("OK");
+		} catch(Exception ex) {
+			ex.printStackTrace();
+		}
+		
+		return new ResponseEntity<JsonResponse<String>>(res, HttpStatus.OK);
+		
 	}
 
 }
