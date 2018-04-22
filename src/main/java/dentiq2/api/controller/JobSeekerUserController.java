@@ -771,8 +771,8 @@ public class JobSeekerUserController {
 			List<JobAttrGroup> jobAttrGroupList = JobAttrGroup.createJobAttrGroupFromStringList(attrStrList);	// 속성 그룹 리스트 생성
 			List<LocationSummary> locationSummary = commonMapper.summarySpecificSiguListByLocationCode(locationCodeListAsSiguCode, jobAttrGroupList);
 			
-			if ( siguCodeList==null || siguCodeList.size()<1 )												// 요청된 siguCodeList가 없다면, 관심지역들의 SIGU_CODE를 요청된 SIGU_CODE로 보내주어야 한다.
-				siguCodeList = Location.convertLocationCodeOrSiguCodeListToSiguCodeList(siguCodeList);		// locationCodeListAsSiguCode가 지역코드(LOCATION_CODE)의 형태이므로, 이를 SIGU_CODE로 변경하여야 한다.
+			if ( siguCodeList==null || siguCodeList.size()<1 )															// 요청된 siguCodeList가 없다면, 관심지역들의 SIGU_CODE를 요청된 SIGU_CODE로 보내주어야 한다.
+				siguCodeList = Location.convertLocationCodeOrSiguCodeListToSiguCodeList(locationCodeListAsSiguCode);	// locationCodeListAsSiguCode가 지역코드(LOCATION_CODE)의 형태이므로, 이를 SIGU_CODE로 변경하여야 한다.
 			
 			JobAdSummary summary = new JobAdSummary(null, siguCodeList, attrStrList, locationSummary);
 			res.setResponse(summary);
