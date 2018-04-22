@@ -111,9 +111,9 @@ public class Resume {
 	}
 	
 	
-	@Getter @Setter private String openYN;		// 이력서 공개 여부
+	@Getter @Setter private String openYn;		// 이력서 공개 여부
 	public boolean isOpened() {
-		if ( this.openYN != null && this.openYN.equals("Y") )	return true;
+		if ( this.openYn != null && this.openYn.equals("Y") )	return true;
 		else return false;
 	}
 	
