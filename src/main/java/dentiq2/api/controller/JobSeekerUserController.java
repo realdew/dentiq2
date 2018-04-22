@@ -274,6 +274,13 @@ public class JobSeekerUserController {
 		try {
 			getJobSeekerUserSession(httpRequest, httpResponse);
 			
+			// 이력서가 작성되었는지 먼저 검토하여야 한다.
+			Long resumeId = commonMapper.getResumeIdOfUser(userId);
+			if ( resumeId == null ) throw new LogicalException(ErrorCode.USER_602);
+			
+			//TODO 인서트하기 전에 이미 기존재하는지 확인 필요. 현재는 개발 중이므로, 에러 발견을 위해서 하지 않는다.
+			// int cnt = commonMapper.has~~~ 이미 인서트되어 있는지 확인
+			
 			commonMapper.insertAppliedJobAd(userId, jobAdId);
 			
 			List<Long> appliedJobAdIdList = commonMapper.listAppliedJobAdId(userId);

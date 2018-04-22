@@ -260,7 +260,9 @@ public interface CommonMapper {
 	public int deleteResumeLocationAll(@Param("resumeId") Long resumeId) throws Exception;
 	public int insertResumeLocationAll(@Param("resumeId") Long resumeId, @Param("resumeApplyLocationCodeList") List<String> resumeApplyLocationCodeList) throws Exception;
 	
-	
+	// 공고에 지원하기 위하여는, 이력서가 등록되어 있을 것이 선결조건임. 이를 확인하기 위함 ==> 구직자 활동에 정의되어 있음
+	// @Select("select RESUME_ID from USER_RESUME where USER_ID=#{userId} and USE_YN='Y'")
+	// public Long getResumeIdOfUser(@Param("userId") Long userId) throws Exception;
 	
 	
 	/**************************************************************************************************************************/
@@ -323,6 +325,9 @@ public interface CommonMapper {
 	@Delete("delete from USER_APPLY where USER_ID=#{userId} and JOB_AD_ID=#{jobAdId}")
 	public int deleteAppliedJobAd(@Param("userId") Long userId, @Param("jobAdId") Long jobAdId) throws Exception;	// 지원 취소할 때 사용하기로 한다.
 	
+	// 공고에 지원하기 위하여는, 이력서가 등록되어 있을 것이 선결조건임. 이를 확인하기 위함
+	@Select("select RESUME_ID from USER_RESUME where USER_ID=#{userId} and USE_YN='Y'")
+	public Long getResumeIdOfUser(@Param("userId") Long userId) throws Exception;
 	
 	
 	/** (병원이 한) 면접 요청된 공고 목록 보기 **/
