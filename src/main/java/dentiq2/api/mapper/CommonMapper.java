@@ -114,6 +114,10 @@ public interface CommonMapper {
 	@Update("update USER set HOSPITAL_ID=#{hospitalId} where USER_ID=#{hospitalUserId} and USE_YN='Y'")
 	public int updateHospitalIdOfHospitalUser(@Param("hospitalUserId") Long hospitalUserId, @Param("hospitalId") Long hospitalId) throws Exception;
 	
+	// 로고 이미지를 업로드한 경우 상태값 변경
+	@Update("update HOSPITAL set LOGO_IMAGE_YN=#{flag} where HOSPITAL_ID=#{hospitalId}")
+	public int updateLogoImageYn(@Param("hospitalId") Long hospitalId, @Param("flag") String flag) throws Exception;
+	
 	
 	
 	/**************************************************************************************************************************/
@@ -234,6 +238,10 @@ public interface CommonMapper {
 	
 	public Location getUserLocationByUserId(@Param("userId") Long userId) throws Exception;	// 사용자 주소 조회
 	public int updateUserLocation(@Param("userId") Long userId, @Param("location") Location location) throws Exception;	// 사용자 주소 수정
+	
+	// 로고 이미지를 업로드한 경우 상태값 변경
+	@Update("update USER set PROFILE_IMAGE_YN=#{flag} where USER_ID=#{hospitalId}")
+	public int updateProfileImageYn(@Param("userId") Long userId, @Param("flag") String flag) throws Exception;
 	
 	
 	

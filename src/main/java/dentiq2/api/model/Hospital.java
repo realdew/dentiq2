@@ -85,6 +85,12 @@ public class Hospital {
 	@Getter @Setter private String defaultHrEmail;				// 디폴트 채용이메일 주소
 	
 	
+	@Getter private Boolean hasLogoImage;
+		@JsonIgnore public void setLogoImageYn(String flag) {
+			if ( flag !=null && flag.equals("Y") ) hasLogoImage = true;
+			else hasLogoImage = null;
+		}
+	
 	// 위치/교통정보 필요함
 	
 	

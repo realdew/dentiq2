@@ -76,8 +76,8 @@ public class JobSeekerUserController {
 	
 	@RequestMapping(value="/user/{userId}/pic/", method=RequestMethod.POST)
 	public ResponseEntity<JsonResponse<String>> registerUserPic(
-												@PathVariable("userId") Integer userId,
-												@RequestParam(value="file",		required=true) MultipartFile uploadedFile,
+												@PathVariable("userId")							Long userId,
+												@RequestParam(value="file",		required=true)	MultipartFile uploadedFile,
 												HttpServletRequest httpRequest,
 												HttpServletResponse httpResponse			
 			) {
@@ -115,6 +115,8 @@ public class JobSeekerUserController {
 //				byte[] largeSizeFileBytes = uploadedFile.getBytes();
 //				FileUtil.saveFile(saveDir, largeSizeFileName, largeSizeFileBytes);
 			
+			
+			commonMapper.updateProfileImageYn(userId, "Y");
 			
 			res.setResponse("OK");
 			

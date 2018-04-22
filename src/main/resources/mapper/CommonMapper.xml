@@ -109,7 +109,8 @@
 		<result property="defaultHrTelNo"			column="DEFAULT_HR_TEL_NO" />
 		<result property="defaultHrOfficerName"		column="DEFAULT_HR_OFFICER_NAME" />
 		<result property="defaultHrEmail"			column="DEFAULT_HR_EMAIL" />
-	    
+		
+		<result property="logoImageYn"			column="LOGO_IMAGE_YN" />
 	    
 	    <association property="location"			resultMap="mapLocation" />
 	</resultMap>
@@ -203,10 +204,11 @@
 	
 	<!-- 개인 회원 정보 MAP -->
 	<resultMap id="mapJobSeekerUser" type="dentiq2.api.model.JobSeekerUser" extends="mapUser">
-		<result property="name"				column="NAME" />
-		<result property="telNo"			column="TEL_NO" />
-		<result property="birthday"			column="BIRTHDAY" />
-		<result property="gender"			column="GENDER" />
+		<result property="name"						column="NAME" />
+		<result property="telNo"					column="TEL_NO" />
+		<result property="birthday"					column="BIRTHDAY" />
+		<result property="gender"					column="GENDER" />
+		<result property="profileImageYn"			column="PROFILE_IMAGE_YN" />
 		
 		<association property="location"			resultMap="mapLocation" />		
 	</resultMap>

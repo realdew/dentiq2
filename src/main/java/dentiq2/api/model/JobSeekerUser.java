@@ -1,5 +1,6 @@
 package dentiq2.api.model;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonInclude.Include;
 
@@ -22,6 +23,13 @@ public class JobSeekerUser extends User {
 	@Getter @Setter private String telNo;
 	@Getter @Setter private String birthday;
 	@Getter @Setter private String gender;
+		
+	@Getter private Boolean hasProfileImage;
+		@JsonIgnore public void setProfileImageYn(String flag) {
+			if ( flag !=null && flag.equals("Y") ) hasProfileImage = true;
+			else hasProfileImage = null;
+		}
+	
 	
 	public Integer getAge() {
 		if ( this.birthday == null || this.birthday.trim().length() != 8 ) {

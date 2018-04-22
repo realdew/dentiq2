@@ -117,8 +117,8 @@ public class HospitalUserController {
 	
 	@RequestMapping(value="/hospital/{hospitalId}/logo/", method=RequestMethod.POST)
 	public ResponseEntity<JsonResponse<String>> registerUserPic(
-												@PathVariable("hospitalId") Integer userId,
-												@RequestParam(value="file",		required=true) MultipartFile uploadedFile,
+												@PathVariable("hospitalId")						Long hospitalId,
+												@RequestParam(value="file",		required=true)	MultipartFile uploadedFile,
 												HttpServletRequest httpRequest,
 												HttpServletResponse httpResponse			
 			) {
@@ -136,13 +136,13 @@ public class HospitalUserController {
 			SystemConstants systemConstants = SystemConstants.getInstance();
 			
 			String saveDir = systemConstants.getHOSPITAL_RESOURCE_PHYSICAL_DIR_ROOT();
-			FileUtil.makeDir(saveDir, userId+"");
+			FileUtil.makeDir(saveDir, hospitalId+"");
 			
 			
 			// small size 저장
 			String smallSizeFileName = systemConstants.getHOSPITAL_RESOURCE_FILE_NAME_LOGO_SMALL();
 			byte[] smallSizeFileBytes = uploadedFile.getBytes();
-			FileUtil.saveFile(saveDir+"/"+userId+"", smallSizeFileName, smallSizeFileBytes);
+			FileUtil.saveFile(saveDir+"/"+hospitalId+"", smallSizeFileName, smallSizeFileBytes);
 			
 //				// medium size 저장
 //				String mediumSizeFileName = serverConfig.getHOSPITAL_RESOURCE_FILE_NAME_LOGO_MEDIUM();
@@ -154,6 +154,8 @@ public class HospitalUserController {
 //				byte[] largeSizeFileBytes = uploadedFile.getBytes();
 //				FileUtil.saveFile(saveDir, largeSizeFileName, largeSizeFileBytes);
 			
+			
+			commonMapper.updateLogoImageYn(hospitalId, "Y");
 			
 			res.setResponse("OK");
 			
