@@ -781,7 +781,7 @@
         select * from HOSPITAL where USER_ID=#{userId}
     </select>
     <select id="getHospitalBasicInfoByUserId" resultMap="mapHospital"> <!-- 주의 : 사용자가 n명인 경우, 여기서의 email은 사용자의 email이 아니고 병원의 대표 email임 -->
-        select HOSPITAL_ID, HOSPITAL_EMAIL, HOSPITAL_NAME from HOSPITAL where USER_ID=#{userId}
+        select HOSPITAL_ID, HOSPITAL_EMAIL, HOSPITAL_NAME, LOGO_IMAGE_YN from HOSPITAL where USER_ID=#{userId}
     </select>
 	
 	
@@ -920,13 +920,21 @@
 			LAT_LON_X=#{location.latLonX}, LAT_LON_Y=#{location.latLonY}
 		where USER_ID=#{userId}
 	</update>
+	
+	<select id="getJobSeekerUserBasicInfo" resultMap="mapJobSeekerUser">
+        select
+        	USER_ID, NAME, EMAIL, USER_TYPE, 
+        	LOCATION_CODE, SIDO_CODE, SIGU_CODE
+        from HOSPITAL
+        where USER_ID=#{userId} and USE_YN='Y'
+    </select>
 		
 	<select id="getJobSeekerUserByUserId" resultMap="mapJobSeekerUser">
-		select * from USER where USER_ID=#{userId}
+		select * from USER where USER_ID=#{userId} and USE_YN='Y'
 	</select>
 	
 	<select id="getUserLocationByUserId" resultMap="mapLocation">
-		select * from USER where USER_ID=#{userId}
+		select * from USER where USER_ID=#{userId} and USE_YN='Y'
 	</select>
 	
 	<!-- 2018.04.03 이주현 추가. UTMK_POINT 컬럼 추가 --> <!-- 2018.04.18 시도명(SIDO_NAME), 시구명(SIGU_NAME) 제거 -->

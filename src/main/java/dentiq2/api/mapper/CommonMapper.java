@@ -230,9 +230,9 @@ public interface CommonMapper {
 	@Select("select SIGU_CODE from USER where USER_ID=#{userId}")
 	public String getUserHomeSiguCode(@Param("userId") Long userId) throws Exception;		// 우리동네 조회 조건
 	
+	public JobSeekerUser getJobSeekerUserBasicInfo(@Param("userId") Long userId) throws Exception;	// 구직(개인)회원 사용자 기본 정보
 	
-	
-	public JobSeekerUser getJobSeekerUserByUserId(@Param("userId") Long userId) throws Exception;				// 구직(개인)회원 사용자 정보
+	public JobSeekerUser getJobSeekerUserByUserId(@Param("userId") Long userId) throws Exception;	// 구직(개인)회원 사용자 정보
 	
 	public int updateJobSeekerUserBasicInfo(JobSeekerUser user) throws Exception;
 	

@@ -659,7 +659,9 @@ public class JobSeekerUserController {
 		try {
 			getJobSeekerUserSession(httpRequest, httpResponse);
 			
-			JobSeekerUser user = commonMapper.getJobSeekerUserByUserId(userId);
+			//JobSeekerUser user = commonMapper.getJobSeekerUserByUserId(userId);
+			JobSeekerUser user = commonMapper.getJobSeekerUserBasicInfo(userId);
+			
 			res.setResponse(user);
 		} catch(Exception ex) {
 			res.setException(ex);
