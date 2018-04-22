@@ -236,7 +236,7 @@
 		<result property="eduStartYYYYMM"			column="EDU_START_YYYYMM" />
 		<result property="eduEndYYYYMM"				column="EDU_END_YYYYMM" />
 		<result property="careerJson"				column="CAREER_JSON" />
-		<result property="licenceJson"				column="LICENCE_JSON" />
+		<result property="licenseJson"				column="LICENSE_JSON" />
 		<result property="confirmRecommendation"	column="CONFIRM_RECOMMENDATION" />
 		<result property="content"					column="CONTENT" />
 		<result property="regDt"					column="REG_DT" />
