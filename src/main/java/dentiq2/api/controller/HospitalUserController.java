@@ -206,8 +206,10 @@ public class HospitalUserController {
 		return new ResponseEntity<JsonResponse<List<Resume>>>(res, HttpStatus.OK);	
 	}
 	
+	
+	
 	/**************************************** 이력서 스크랩 ****************************************/
-	@RequestMapping(value="/hospital/{hospitalId}/resumeScrapped", method=RequestMethod.GET)
+	@RequestMapping(value="/hospital/{hospitalId}/resumeScrapped/", method=RequestMethod.GET)
 	public ResponseEntity<JsonResponse<List<Resume>>> listResumeScrapped(
 						@PathVariable("hospitalId")			Long hospitalId,
 						HttpServletRequest httpRequest,
@@ -231,7 +233,7 @@ public class HospitalUserController {
 		
 		return new ResponseEntity<JsonResponse<List<Resume>>>(res, HttpStatus.OK);	
 	}	
-	@RequestMapping(value="/hospital/{hospitalId}/resumeScrapped/{resumeId}", method=RequestMethod.POST)
+	@RequestMapping(value="/hospital/{hospitalId}/resumeScrapped/{resumeId}/", method=RequestMethod.POST)
 	public ResponseEntity<JsonResponse<List<Resume>>> addResumeScrapped(
 						@PathVariable("hospitalId")						Long hospitalId,
 						@PathVariable(value="resumeId",	required=true)	Long resumeId,
@@ -285,6 +287,69 @@ public class HospitalUserController {
 		
 		return new ResponseEntity<JsonResponse<List<Resume>>>(res, HttpStatus.OK);	
 	}
+	
+	@RequestMapping(value="/hospital/{hospitalId}/resumeScrappedId/", method=RequestMethod.GET)
+	public ResponseEntity<JsonResponse<List<Long>>> listResumeIdScrapped(
+						@PathVariable("hospitalId")			Long hospitalId,
+						HttpServletRequest httpRequest,
+						HttpServletResponse httpResponse		
+			) {		
+		JsonResponse<List<Long>> res = new JsonResponse<List<Long>>();
+		try {
+			getHospitalUserSession(httpRequest, httpResponse);			
+			List<Long> resumeIdList = commonMapper.listResumeIdScrapped(hospitalId);
+			res.setResponse(resumeIdList);		
+		} catch(Exception ex) {
+			res.setException(ex);
+		}
+		
+		return new ResponseEntity<JsonResponse<List<Long>>>(res, HttpStatus.OK);	
+	}	
+	@RequestMapping(value="/hospital/{hospitalId}/resumeScrappedId/{resumeId}/", method=RequestMethod.POST)
+	public ResponseEntity<JsonResponse<List<Long>>> addResumeIdScrapped(
+						@PathVariable("hospitalId")						Long hospitalId,
+						@PathVariable(value="resumeId",	required=true)	Long resumeId,
+						HttpServletRequest httpRequest,
+						HttpServletResponse httpResponse		
+			) {
+		
+		JsonResponse<List<Long>> res = new JsonResponse<List<Long>>();
+		try {
+			getHospitalUserSession(httpRequest, httpResponse);
+			commonMapper.addResumeScrapped(hospitalId, resumeId);
+			
+			List<Long> resumeIdList = commonMapper.listResumeIdScrapped(hospitalId);
+			res.setResponse(resumeIdList);
+		} catch(Exception ex) {
+			res.setException(ex);
+		}		
+		return new ResponseEntity<JsonResponse<List<Long>>>(res, HttpStatus.OK);	
+	}
+	@RequestMapping(value="/hospital/{hospitalId}/resumeScrappedId/{resumeId}/", method=RequestMethod.DELETE)
+	public ResponseEntity<JsonResponse<List<Long>>> deleteResumeIdScrapped(
+						@PathVariable("hospitalId")						Long hospitalId,
+						@PathVariable(value="resumeId",	required=true)	Long resumeId,
+						HttpServletRequest httpRequest,
+						HttpServletResponse httpResponse		
+			) {
+		
+		JsonResponse<List<Long>> res = new JsonResponse<List<Long>>();
+		try {
+			getHospitalUserSession(httpRequest, httpResponse);			
+			commonMapper.deleteResumeScrapped(hospitalId, resumeId);
+			
+			List<Long> resumeIdList = commonMapper.listResumeIdScrapped(hospitalId);
+			res.setResponse(resumeIdList);
+		} catch(Exception ex) {
+			res.setException(ex);
+		}
+		
+		return new ResponseEntity<JsonResponse<List<Long>>>(res, HttpStatus.OK);	
+	}
+	
+	
+	
+	
 	
 	
 	//TODO 고치자... 뭔가 이상하다.
