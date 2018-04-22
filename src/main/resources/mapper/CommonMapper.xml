@@ -924,8 +924,9 @@
 	<select id="getJobSeekerUserBasicInfo" resultMap="mapJobSeekerUser">
         select
         	USER_ID, NAME, EMAIL, USER_TYPE, 
-        	LOCATION_CODE, SIDO_CODE, SIGU_CODE
-        from HOSPITAL
+        	LOCATION_CODE, SIDO_CODE, SIGU_CODE,
+        	PROFILE_IMAGE_YN
+        from USER
         where USER_ID=#{userId} and USE_YN='Y'
     </select>
 		
