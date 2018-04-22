@@ -1,7 +1,5 @@
 package dentiq2.api.util;
 
-import java.nio.charset.StandardCharsets;
-import java.security.MessageDigest;
 import java.util.Base64;
 import java.util.Enumeration;
 import java.util.Base64.Decoder;
@@ -18,10 +16,11 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import dentiq2.api.model.User;
 import dentiq2.api.util.JsonUtil;
 import dentiq2.api.util.UserSession;
-import dentiq2.api.util.UserSessionManager;
 import dentiq2.api.util.UserSessionManagerImplCookie;
 import dentiq2.api.util.UserSessionManagerImplHttpHeader;
 
+
+@Deprecated
 public abstract class UserSessionManagerOLD {
 	public static final int TYPE_COOKIE = 1;
 	public static final int TYPE_HEADER = 2;
@@ -48,7 +47,7 @@ public abstract class UserSessionManagerOLD {
 	//private static final String HMAC_SHA1_ALGORITHM = "HmacSHA1";
 	
 	
-	private static final String SALT = "1111";
+	//private static final String SALT = "1111";
 	
 	public String generateToken(UserSession userSession) throws Exception {
 		return createToken(userSession);
