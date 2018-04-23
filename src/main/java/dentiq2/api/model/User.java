@@ -41,6 +41,12 @@ public class User {
 	
 	@Getter @Setter protected String	token;		// 인증 토큰
 	
+	@Getter protected Boolean			isForcedChangePassword;
+		@JsonIgnore public void setForcedChangePasswordYn(String flag) {		// 비밀번호 반드시 변경해야 하는지 여부, MUST_CHANGE_PASSWORD_YN
+			if ( flag!=null && flag.equals("Y") ) isForcedChangePassword = true;
+		}
+	
+	
 	// 보안 정보들을 필터링한다.
 	public void filter() {
 		this.password = null;

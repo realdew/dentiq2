@@ -212,18 +212,26 @@ public interface CommonMapper {
 	@Select("select SHA1(#{password})")
 	public String encryptPassword(@Param("password") String password) throws Exception;
 	
+	@Update("update USER set PASSWORD=SHA1(#{tempPassword}), FORCED_CHANGE_PASSWORD_YN='Y', LAST_PASSWORD_CHANGED_TIMESTAMP=CURRENT_TIMESTAMP where EMAIL=#{email}")
+	public int updatePasswordForReset(@Param("email") String email, @Param("tempPassword") String tempPassword) throws Exception;
+	
+	@Update("update USER set PASSWORD=SHA1(#{newPassword}),  FORCED_CHANGE_PASSWORD_YN='N', LAST_PASSWORD_CHANGED_TIMESTAMP=CURRENT_TIMESTAMP where EMAIL=#{email} and PASSWORD=SHA1(#{oldPassword})")
+	public int updatePasswordForChange(@Param("email") String email, @Param("oldPassword") String oldPassword, @Param("newPassword") String newPassword) throws Exception;
+	
+	@Select("select count(1) from USER where EMAIL=#{email} and PASSWORD=SHA1(#{password}) and USE_YN='Y'")
+	public int countUserWithEmailAndPassword(@Param("email") String email, @Param("password") String password) throws Exception;
 	
 	@Select("select USER_ID, EMAIL, USER_TYPE, HOSPITAL_ID, KEEPING_LOGIN_TYPE, USE_YN from USER where USER_ID=#{userId} and USE_YN='Y'")
 	public User getUserMinimalById(@Param("userId") Long userId) throws Exception;				// 세션 정보 생성 용도 (회원가입 직후, 회원가입결과 출력 및 세션 생성)
 	
-	@Select("select USER_ID, EMAIL, USER_TYPE, HOSPITAL_ID, USE_YN, PASSWORD as PASSWORD_ENCRYPTED from USER where EMAIL=#{email}")
+	@Select("select USER_ID, EMAIL, USER_TYPE, HOSPITAL_ID, USE_YN, PASSWORD as PASSWORD_ENCRYPTED, FORCED_CHANGE_PASSWORD_YN from USER where EMAIL=#{email} and USE_YN='Y'")
 	public User getUserMinimalByEmail(@Param("email") String email) throws Exception;			// 세션 정보 생성 용도
 	
 		
-	@Select("select count(1) USER where EMAIL=#{email}")
+	@Select("select count(1) from USER where EMAIL=#{email} and USE_YN='Y'")
 	public int countUsersByEmail(@Param("email") String email) throws Exception;			// 회원가입 시 email 중복 확인
 	
-	@Select("select count(1) from USER where BIZ_REG_NO=#{bizRegNo}")
+	@Select("select count(1) from USER where BIZ_REG_NO=#{bizRegNo}  and USE_YN='Y'")
 	public int countUsersByBizRegNo(@Param("bizRegNo") String bizRegNo) throws Exception;	// 회원가입 시 사업자번호 중복 확인
 	
 		

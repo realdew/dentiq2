@@ -5,6 +5,8 @@ import java.util.List;
 import javax.annotation.PostConstruct;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.mail.SimpleMailMessage;
+import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
@@ -70,6 +72,23 @@ public class AdminController {
 		
 		
 		
+		return result;
+	}
+	
+	@Autowired private JavaMailSender mailSender;
+	
+	@RequestMapping(value="/testMail/", method=RequestMethod.GET)
+	public String testMail() throws Exception {
+		
+		SimpleMailMessage message = new SimpleMailMessage();
+		message.setTo("leejuhyeon@gmail.com");
+		message.setSubject("[덴탈플러스 시스템 관리자 " + System.currentTimeMillis());
+		message.setText("테스트 메시지임. " + System.currentTimeMillis());
+		
+		mailSender.send(message);
+		
+		
+		String result = "A test email was sent !!! : " + System.currentTimeMillis();
 		return result;
 	}
 

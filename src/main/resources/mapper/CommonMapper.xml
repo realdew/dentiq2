@@ -199,7 +199,11 @@
 		<result property="agreementEventYn"			column="AGREEMENT_EVENT_YN" />
 		<result property="agreementAdYn"			column="AGREEMENT_AD_YN" />
 		
-		<result property="hospitalId"				column="HOSPITAL_ID" />
+		<result property="forcedChangePasswordYn"	column="FORCED_CHANGE_PASSWORD_YN" />
+		
+		
+		
+		<result property="hospitalId"				column="HOSPITAL_ID" />	<!-- 여기에 있는 것이 부자연스러우나, 세션 체크 등에서 편리하게 하기 위하여 이렇게 함 -->
 	</resultMap>
 	
 	<!-- 개인 회원 정보 MAP -->
@@ -921,10 +925,17 @@
 		where USER_ID=#{userId}
 	</update>
 	
+	<!-- 주소 정보가 들어와야 함. 구직회원 기본정보 수정(주소)에서 필요함 -->
 	<select id="getJobSeekerUserBasicInfo" resultMap="mapJobSeekerUser">
         select
-        	USER_ID, NAME, EMAIL, USER_TYPE, 
+        	USER_ID, NAME, EMAIL, USER_TYPE,
+        	
         	LOCATION_CODE, SIDO_CODE, SIGU_CODE,
+        	ADDR_MAIN, ADDR_DETAIL, 
+			JIBUN_ADDR, ADM_CD, RN_MGT_SN, UDRT_YN, BULD_MNNM, BULD_SLNO, BD_NM, EMD_NM, 
+			ENT_X, ENT_Y, UTMK_POINT, ZIP_NO,
+			LAT_LON_X, LAT_LON_Y,
+        	
         	PROFILE_IMAGE_YN
         from USER
         where USER_ID=#{userId} and USE_YN='Y'
