@@ -1,6 +1,9 @@
 package dentiq2.api.controller;
 
-import java.util.List;
+
+
+import java.util.Hashtable;
+import java.util.Map;
 
 import javax.servlet.http.HttpServletResponse;
 
@@ -18,11 +21,9 @@ import dentiq2.api.ErrorCode;
 import dentiq2.api.LogicalException;
 import dentiq2.api.controller.JsonResponse;
 import dentiq2.api.mapper.CommonMapper;
-import dentiq2.api.model.JobAd;
-import dentiq2.api.model.JobAttrGroup;
 import dentiq2.api.model.User;
-import dentiq2.api.util.PageInfo;
 import dentiq2.api.util.UserSessionManager;
+
 
 @RestController
 @RequestMapping("/api")
@@ -151,6 +152,10 @@ public class LoginController {
 		
 		JsonResponse<User> res = new JsonResponse<User>();
 		try {
+			//TODO 사업자번호 중복확인
+			
+			//TODO EMAIL 중복확인
+			
 			commonMapper.createUser(userReq);
 			
 			User user = commonMapper.getUserMinimalById(userReq.getUserId());
@@ -177,24 +182,49 @@ public class LoginController {
 		return new ResponseEntity<JsonResponse<User>>(res, HttpStatus.CREATED);
 	}
 	
-	/* 사업자번호 중복 여부 확인 */
-	@RequestMapping(value="/checkBizRegNo/", method=RequestMethod.GET)
-	public ResponseEntity< JsonResponse< String > > listJobAd(
-			@RequestParam(value="bizRegNo",		required=true)		String bizRegNo
-			) {
-		
-		JsonResponse<String> res = new JsonResponse<String>();
+	
+	
+	/* ID 및 사업자 번호 중복 여부 확인 */
+	@RequestMapping(value="/checkAvailable/", method=RequestMethod.GET)
+	public ResponseEntity< JsonResponse< Map<String, Boolean> > > checkEmail(
+			@RequestParam(value="email",		required=false)		String email,
+			@RequestParam(value="bizRegNo",		required=false)		String bizRegNo
+			) {		
+		JsonResponse<Map<String, Boolean>> res = new JsonResponse<Map<String, Boolean>>();
 		try {
+			Map<String, Boolean> result = new Hashtable<String, Boolean>();
 			
-			int cnt = commonMapper.countUsersByBizRegNo(bizRegNo);
-			if ( cnt != 0 )	res.setResponse("FAIL");
-			else			res.setResponse("OK");
+			if ( email!=null && !email.trim().equals("") ) {
+				if ( availableEmail(commonMapper, email) )	result.put("email", true);
+				else										result.put("email", false);
+			}
+			
+			if ( bizRegNo!=null && !bizRegNo.trim().equals("") ) {
+				if ( availableBizRegNo(commonMapper, email) )	result.put("bizRegNo", true);
+				else											result.put("bizRegNo", false);
+			}
+			
+			res.setResponse(result);
+			
 		} catch(Exception ex) {
 			ex.printStackTrace();
-		}
-		
-		return new ResponseEntity<JsonResponse<String>>(res, HttpStatus.OK);
-		
+		}		
+		return new ResponseEntity<JsonResponse<Map<String, Boolean>>>(res, HttpStatus.OK);		
 	}
+	
+	/* ID 중복 확인 */
+	private boolean availableEmail(CommonMapper internalMapper, String email) throws Exception {
+		int cnt = internalMapper.countUsersByEmail(email);
+		if ( cnt == 0 ) return true;
+		else return false;
+	}
+	
+	/* 사업자 번호 중복 여부 확인 */
+	private boolean availableBizRegNo(CommonMapper internalMapper, String bizRegNo) throws Exception {
+		int cnt = internalMapper.countUsersByBizRegNo(bizRegNo);
+		if ( cnt == 0 ) return true;
+		else return false;
+	}
+	
 
 }
