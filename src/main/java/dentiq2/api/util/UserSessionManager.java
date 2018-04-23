@@ -143,12 +143,12 @@ public class UserSessionManager {
 		
 		if ( session.getUserId() == null ) {
 			//throw new Exception("사용자 세션에 userId가 존재하지 않습니다.");
-			System.out.println("사용자 세션에 userId가 존재하지 않습니다.");
+			System.out.println("verifyToken() : 사용자 세션에 userId가 존재하지 않습니다.");
 			return null;
 		}
 		if ( session.getUserType() == null || session.getUserType().trim().equals("") ) {
 			//throw new Exception("사용자 세션에 userType이 존재하지 않습니다.");
-			System.out.println("사용자 세션에 userType이 존재하지 않습니다.");
+			System.out.println("verifyToken() : 사용자 세션에 userType이 존재하지 않습니다.");
 			return null;
 		}
 		
@@ -168,7 +168,7 @@ public class UserSessionManager {
 //			
 //		}
 		if ( session.getExpireTimeAt().compareTo(currentTime) < 0 ) {
-			System.out.println("세션 새로 발급");
+			System.out.println("verifyToken() : 세션 새로 발급");
 			issueTokenWithSession(res, session, null);	// 기존 keepingLoginType 그대로 유지
 		}
 		
