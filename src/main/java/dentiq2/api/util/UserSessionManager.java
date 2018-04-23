@@ -99,12 +99,15 @@ public class UserSessionManager {
 		
 		String tokenStr = req.getHeader(UserSession.TOKEN_NAME);
 		System.out.println("verifyToken() : 토큰 검증 요청됨 [" + tokenStr + "]");
-		if ( tokenStr==null ) throw new Exception("로그인되어 있지 않습니다.");
+		//if ( tokenStr==null ) throw new Exception("로그인되어 있지 않습니다.");
+		if ( tokenStr==null ) return null;
 		
 		
 		String[] tokenPart = tokenStr.split("\\.");
 		if ( tokenPart.length != 2 ) {
-			throw new Exception("올바른 토큰 형식 아님 [" + tokenStr + "]");
+			//throw new Exception("올바른 토큰 형식 아님 [" + tokenStr + "]");
+			System.out.println("verifyToken() : 올바른 토큰 형식이 아님 [" + tokenStr + "]");
+			return null;
 		}		
 		String encodedSession = tokenPart[0];
 		String encodedHash = tokenPart[1];
@@ -133,14 +136,20 @@ public class UserSessionManager {
 			session = fromJsonString(sessionJson);	// 임시
 		} catch(Exception ex) {
 			ex.printStackTrace();
-			throw new Exception("사용자 세션 토큰 검증에 실패했습니다. (" + ex + ")");			
+			//throw new Exception("사용자 세션 토큰 검증에 실패했습니다. (" + ex + ")");
+			System.out.println("verifyToken() : 사용자 세션 토큰 검증에 실패했습니다. (" + ex + ")");
+			return null;
 		}
 		
 		if ( session.getUserId() == null ) {
-			throw new Exception("사용자 세션에 userId가 존재하지 않습니다.");
+			//throw new Exception("사용자 세션에 userId가 존재하지 않습니다.");
+			System.out.println("사용자 세션에 userId가 존재하지 않습니다.");
+			return null;
 		}
 		if ( session.getUserType() == null || session.getUserType().trim().equals("") ) {
-			throw new Exception("사용자 세션에 userType이 존재하지 않습니다.");
+			//throw new Exception("사용자 세션에 userType이 존재하지 않습니다.");
+			System.out.println("사용자 세션에 userType이 존재하지 않습니다.");
+			return null;
 		}
 		
 		
