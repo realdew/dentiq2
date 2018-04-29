@@ -425,7 +425,7 @@ public class HospitalUserController {
 			List<Resume> resumeList = commonMapper.listResumeSearched(pageInfo.startIndexOnPage, pageInfo.itemCntPerPage);
 			res.setResponse(resumeList);
 			
-			if ( pageNo > 1 ) {		// 첫번째 페이지일 경우에만 전체 개수를 조회한다.
+			if ( pageNo == 1 ) {		// 첫번째 페이지일 경우에만 전체 개수를 조회한다.
 				int totalItemCnt = commonMapper.countResumeSearched();
 				System.out.println("목록의 전체 개수 : " + totalItemCnt);
 				pageInfo.setTotalItemCnt(totalItemCnt);
