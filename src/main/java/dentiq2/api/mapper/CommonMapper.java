@@ -1,7 +1,6 @@
 package dentiq2.api.mapper;
 
 import java.util.List;
-import java.util.Map;
 
 import org.apache.ibatis.annotations.Delete;
 import org.apache.ibatis.annotations.Insert;
@@ -85,7 +84,7 @@ public interface CommonMapper {
 					@Param("adType")			String jobAdType,
 					
 					@Param("startIndexOnPage")	Integer startIndexOnPage,
-					@Param("itemCntPerPage")	Integer itemCntPerPage			
+					@Param("itemCntPerPage")	Integer itemCntPerPage
 			) throws Exception;
 	
 
@@ -129,15 +128,28 @@ public interface CommonMapper {
 	/* 특정 병원의 공고 목록을 조회 */
 	public List<JobAd> listJobAdOfHospital(@Param("hospitalId") Long hospitalId) throws Exception;
 	
+	
+	/** hr_management 관련 **/
+	
+	public int countResumeScrappedByHospitalIdAndResumeId(@Param("hospitalId") Long hospitalId, @Param("resumeId") Long resumeId) throws Exception;
+	public int countResumeOfferedByHospitalIdAndResumeId(@Param("hospitalId") Long hospitalId, @Param("resumeId") Long resumeId) throws Exception;
+	
+	
 	/* 특정 병원에 지원한 이력서들을 조회 */
-	public List<Resume> listResumeApplied(@Param("hospitalId") Long hospitalId) throws Exception;
+	public List<Resume> listResumeAppliedByHospitalId(@Param("hospitalId") Long hospitalId) throws Exception;
+	
+	
+	/* 병원이 제안(offer)한 이력서들 리스팅 */
+	public List<Resume> listResumeOfferedByHospitalId(@Param("hospitalId") Long hospitalId) throws Exception;	
+	
+	/* 병원이 이력서(사용자)에 대하여 면접 제안 */
+	@Insert("insert into HOSPITAL_OFFER (JOB_AD_ID, RESUME_ID) values (#{jobAdId}, #{resumeId})")
+	public int addResumeOfferedByJobAdIdAndResumeId(@Param("jobAdId") Long jobAdId, @Param("resumeId") Long resumeId) throws Exception;
+	
 	
 	/* 특정 병원이 스크랩한 이력서들을 조회 */
-	public List<Resume> listResumeScrapped(@Param("hospitalId") Long hospitalId) throws Exception;
-	
-	@Select("select RESUME_ID from HOSPITAL_SCRAPPED_RESUME where HOSPITAL_ID=#{hospitalId}")
-	public List<Long> listResumeIdScrapped(@Param("hospitalId") Long hospitalId) throws Exception;
-	
+	public List<Resume> listResumeScrappedByHospitalId(@Param("hospitalId") Long hospitalId) throws Exception;
+		
 	/* 이력서를 스크랩 */
 	@Insert("insert into HOSPITAL_SCRAPPED_RESUME (HOSPITAL_ID, RESUME_ID) values (#{hospitalId}, #{resumeId})")
 	public int addResumeScrapped(@Param("hospitalId") Long hospitalId, @Param("resumeId") Long resumeId) throws Exception;
@@ -152,41 +164,6 @@ public interface CommonMapper {
 	@Select("select count(1) from JOB_AD where HOSPITAL_ID=#{hospitalId} and JOB_AD_ID=#{jobAdId}")
 	public int hasCertainJobAdOfHospital(@Param("hospitalId") Long hospitalId, @Param("jobAdId") Long jobAdId) throws Exception;
 	
-//	/* 병원이 제안(offer)한 이력서들 리스팅 */
-//	public List<Resume> listResumeOfferedByHospitalId(@Param("hospitalId") Long hospitalId) throws Exception;
-	
-	/* 병원이 제안(offer)한 이력서 ID들 리스팅 */
-	// TODO 중요!!! : 해당 공고가 ACTIVE한 것인지 확인해야 한다.
-	@Select("select O.JOB_AD_ID as jobAdId, O.RESUME_ID as resumeId from HOSPITAL_OFFER O, JOB_AD J where O.JOB_AD_ID=J.JOB_AD_ID and J.HOSPITAL_ID=#{hospitalId} and J.USE_YN='Y'")
-	public List<Map<String, Long>> listResumeOfferedIdAndJobAdIdByHospitalId(@Param("hospitalId") Long hospitalId) throws Exception;
-	
-	/* 병원이 이력서(사용자)에 대하여 면접 제안 */
-	@Insert("insert into HOSPITAL_OFFER (JOB_AD_ID, RESUME_ID) values (#{jobAdId}, #{resumeId})")
-	public int addResumeOfferedByJobAdIdAndResumeId(@Param("jobAdId") Long jobAdId, @Param("resumeId") Long resumeId) throws Exception;
-	
-//	/* 병원이 이력서(사용자)에 대하여 면접 제안한 것 취소 */
-//	@Delete("delete from HOSPITAL_OFFER where JOB_AD_ID=#{jobAdId} and RESUME_ID=#{resumeId}")
-//	public int deleteResumeOfferedByByJobAdIdAndResumeId(@Param("jobAdId") Long jobAdId, @Param("resumeId") Long resumeId) throws Exception;
-	
-
-
-// 기존 코드 
-//
-//		/* 병원이 제안(offer)한 이력서들 리스팅 */
-//		public List<Resume> listOfferedResume(@Param("hospitalId") Long hospitalId) throws Exception;
-//		
-//		/* 병원이 제안(offer)한 이력서 ID들 리스팅 */
-//		@Select("select RESUME_ID from HOSPITAL_OFFER where HOSPITAL_ID=#{hospitalId}")
-//		public List<Long> listOfferedResumeId(@Param("hospitalId") Long hospitalId) throws Exception;
-//		
-//		/* 병원이 이력서(사용자)에 대하여 면접 제안 */
-//		@Insert("insert into HOSPITAL_OFFER (HOSPITAL_ID, RESUME_ID) values (#{hospitalId}, #{resumeId})")
-//		public int addResumeOffered(@Param("hospitalId") Long hospitalId, @Param("resumeId") Long resumeId) throws Exception;
-//		
-//		/* 병원이 이력서(사용자)에 대하여 면접 제안한 것 취소 */
-//		@Delete("delete from HOSPITAL_OFFER where HOSPITAL_ID=#{hospitalId} and RESUME_ID=#{resumeId}")
-//		public int deleteResumeOffered(@Param("hospitalId") Long hospitalId, @Param("resumeId") Long resumeId) throws Exception;
-
 	
 	
 	/* 인재 추천 */
@@ -194,6 +171,13 @@ public interface CommonMapper {
 	
 	
 	
+	// 인재 열람(이력서 열람) : Open된 이력서 + 현재 병원에 지원한 이력서(해당 이력서가 Open되지 않은 것일 수도 있으므로)
+	// 주의 : 현재 버전에서는 현재 병원에 지원한 이력서는 포함 안함 (ONLY Open된 이력서만)
+	public List<Resume> listResumeSearched(
+									//@Param("hospitalId") Long hospitalId,		// 현재는 사용 안 함...
+									@Param("startIndexOnPage")	Integer startIndexOnPage,
+									@Param("itemCntPerPage")	Integer itemCntPerPage) throws Exception;
+	public int countResumeSearched() throws Exception;
 	
 	
 	
@@ -248,7 +232,7 @@ public interface CommonMapper {
 	public int updateUserLocation(@Param("userId") Long userId, @Param("location") Location location) throws Exception;	// 사용자 주소 수정
 	
 	// 로고 이미지를 업로드한 경우 상태값 변경
-	@Update("update USER set PROFILE_IMAGE_YN=#{flag} where USER_ID=#{hospitalId}")
+	@Update("update USER set PROFILE_IMAGE_YN=#{flag} where USER_ID=#{userId}")
 	public int updateProfileImageYn(@Param("userId") Long userId, @Param("flag") String flag) throws Exception;
 	
 	
@@ -297,12 +281,22 @@ public interface CommonMapper {
 	public int insertInterestLocationAll(@Param("userId") Long userId, @Param("locationCodeStrList") List<String> locationCodeStrList) throws Exception;	// 생성하여 사용할 것이 아니므로, insertXXX 형태로 네이밍
 	
 	
+	
+	/**************************************/
+	@Select("select count(1) from USER_SCRAPPED_JOB_AD where USER_ID=#{userId} and JOB_AD_ID=#{jobAdId}")
+	public int countByScrappedJobAdId(@Param("userId") Long userId, @Param("jobAdId") Long jobAdId) throws Exception;
+	
+	@Select("select count(1) from USER_APPLY where USER_ID=#{userId} and JOB_AD_ID=#{jobAdId}")
+	public int countByAppliedJobAdId(@Param("userId") Long userId, @Param("jobAdId") Long jobAdId) throws Exception;
+	
+	@Select("select count(1) from USER_INTEREST_HOSPITAL H, JOB_AD J where J.HOSPITAL_ID=H.HOSPITAL_ID and H.USER_ID=#{userId} and J.JOB_AD_ID=#{jobAdId}")
+	public int countByInterestHospitalJobAdId(@Param("userId") Long userId, @Param("jobAdId") Long jobAdId) throws Exception;
+	/**************************************/
+	
+	
 	/** 스크랩 **/
 	public List<JobAd> listScrappedJobAd(@Param("userId") Long userId) throws Exception;
-	
-	@Select("select JOB_AD_ID from USER_SCRAPPED_JOB_AD where USER_ID=#{userId}")
-	public List<Long> listScrappedJobAdId(@Param("userId") Long userId) throws Exception;
-	
+		
 	@Delete("delete from USER_SCRAPPED_JOB_AD where USER_ID=#{userId} and JOB_AD_ID=#{jobAdId}")
 	public int deleteScrappedJobAd(@Param("userId") Long userId, @Param("jobAdId") Long jobAdId) throws Exception;
 	
@@ -314,8 +308,6 @@ public interface CommonMapper {
 	/** 관심병원 **/
 	public List<JobAd> listInterestHospitalJobAd(@Param("userId") Long userId) throws Exception;
 	
-	@Select("select HOSPITAL_ID from USER_INTEREST_HOSPITAL where USER_ID=#{userId}")
-	public List<Long> listInterestHospitalId(@Param("userId") Long userId) throws Exception;
 	
 	@Delete("delete from USER_INTEREST_HOSPITAL where USER_ID=#{userId} and HOSPITAL_ID=#{hospitalId}")
 	public int deleteInterestHospital(@Param("userId") Long userId, @Param("hospitalId") Long hospitalId) throws Exception;
@@ -323,18 +315,15 @@ public interface CommonMapper {
 	@Insert("insert into USER_INTEREST_HOSPITAL(USER_ID, HOSPITAL_ID) values (#{userId}, #{hospitalId})")
 	public int insertInterestHospital(@Param("userId") Long userId, @Param("hospitalId") Long hospitalId) throws Exception;	// 생성하여 사용할 것이 아니므로, insertXXX 형태로 네이밍
 	
-	// 해당 병원이 사용자의 관심병원인지 검사한다.	주의 : 파라미터 순서는 USER_ID, HOSPITAL_ID
-	@Select("select count(1) from USER_INTEREST_HOSPITAL where USER_ID=#{userId} and HOSPITAL_ID=#{hospitalId}")
-	public int isJobSeekerSInterestHospital(@Param("userId") Long userId, @Param("hospitalId") Long hospitalId) throws Exception;
+//	// 해당 병원이 사용자의 관심병원인지 검사한다.	주의 : 파라미터 순서는 USER_ID, HOSPITAL_ID
+//	@Select("select count(1) from USER_INTEREST_HOSPITAL where USER_ID=#{userId} and HOSPITAL_ID=#{hospitalId}")
+//	public int isJobSeekerSInterestHospital(@Param("userId") Long userId, @Param("hospitalId") Long hospitalId) throws Exception;
 	
 	
 	
 	/** 지원공고 **/
 	public List<JobAd> listAppliedJobAd(@Param("userId") Long userId) throws Exception;
-	
-	@Select("select JOB_AD_ID from USER_APPLY where USER_ID=#{userId}")
-	public List<Long> listAppliedJobAdId(@Param("userId") Long userId) throws Exception;
-	
+		
 	@Insert("insert into USER_APPLY(USER_ID, JOB_AD_ID) values (#{userId}, #{jobAdId})")
 	public int insertAppliedJobAd(@Param("userId") Long userId, @Param("jobAdId") Long jobAdId) throws Exception;
 		

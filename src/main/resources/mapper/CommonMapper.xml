@@ -243,7 +243,6 @@
 		<result property="eduEndYYYYMM"				column="EDU_END_YYYYMM" />
 		<result property="careerJson"				column="CAREER_JSON" />
 		<result property="licenseJson"				column="LICENSE_JSON" />
-		<result property="confirmRecommendation"	column="CONFIRM_RECOMMENDATION" />
 		<result property="content"					column="CONTENT" />
 		<result property="regDt"					column="REG_DT" />
 		<result property="lastModDt"				column="LAST_MOD_DT" />
@@ -644,7 +643,7 @@
 			APPLY_LOCATION_CODE_JSON,
 			EDU_LEVEL, EDU_STATUS, EDU_SCHOOL_NAME, EDU_MAJOR, EDU_START_YYYYMM, EDU_END_YYYYMM,
 			CAREER_JSON, LICENSE_JSON,
-			CONFIRM_RECOMMENDATION,
+			OPEN_YN,
 			CONTENT,
 			USE_YN
 		) values (
@@ -655,7 +654,7 @@
 			#{applyLocationCodeJson},
 			#{eduLevel}, #{eduStatus}, #{eduSchoolName}, #{eduMajor}, #{eduStartYYYYMM}, #{eduEndYYYYMM},			
 			#{careerJson}, #{licenseJson},
-			#{confirmRecommendation},
+			#{openYn},
 			#{content},
 			'Y'
 		)
@@ -671,7 +670,7 @@
 			APPLY_LOCATION_CODE_JSON=#{applyLocationCodeJson},
 			EDU_LEVEL=#{eduLevel}, EDU_STATUS=#{eduStatus}, EDU_SCHOOL_NAME=#{eduSchoolName}, EDU_MAJOR=#{eduMajor}, EDU_START_YYYYMM=#{eduStartYYYYMM}, EDU_END_YYYYMM=#{eduEndYYYYMM},
 			CAREER_JSON=#{careerJson}, LICENSE_JSON=#{licenseJson},
-			CONFIRM_RECOMMENDATION=#{confirmRecommendation},
+			OPEN_YN=#{openYn},
 			CONTENT=#{content}
 		where RESUME_ID=#{resumeId} and USER_ID=#{userId}
 	</update>
@@ -803,7 +802,7 @@
 	</select>
 	
 	<!-- 병원 ID로 해당 병원에 지원한 이력서를 리스팅 -->
-	<select id="listResumeApplied" resultMap="mapResume">
+	<select id="listResumeAppliedByHospitalId" resultMap="mapResume">
 		select A.JOB_AD_ID, A.APPLY_DT, R.* 
 		from
 			USER_APPLY A, USER_RESUME_VIEW R
@@ -815,8 +814,20 @@
 	</select>
 	
 	
+	
+	<select id="countResumeScrappedByHospitalIdAndResumeId" resultType="int">
+		select count(1)
+		<!-- listResumeScrappedByHospitalId와 동일하여야 함 -->
+		from USER_RESUME_VIEW R, HOSPITAL_SCRAPPED_RESUME H
+		where
+			R.RESUME_ID = H.RESUME_ID
+			and H.HOSPITAL_ID=#{hospitalId}
+		<!-- 요기까지 -->
+			and H.RESUME_ID=#{resumeId}
+	</select>
+	
 	<!--  병원이 스크랩한 이력서를 리스팅 -->
-	<select id="listResumeScrapped" resultMap="mapResume">
+	<select id="listResumeScrappedByHospitalId" resultMap="mapResume">
 		<!-- select R.*, true as scrapped_By_Hospital -->
 		select R.*
 		from USER_RESUME_VIEW R, HOSPITAL_SCRAPPED_RESUME H
@@ -826,15 +837,29 @@
 	</select>
 	
 	
+	<select id="countResumeOfferedByHospitalIdAndResumeId" resultType="int">
+		select count(1)
+		<!-- listResumeOfferedByHospitalId와 동일하여야 함 -->
+		from USER_RESUME_VIEW R, HOSPITAL_OFFER O, JOB_AD J
+		where
+			R.RESUME_ID=O.RESUME_ID
+			and J.JOB_AD_ID=O.JOB_AD_ID
+			and J.HOSPITAL_ID=#{hospitalId}
+			and J.USE_YN='Y' -- 공고 유효 기간 확인 필요
+		<!-- 요기까지 -->
+			and O.RESUME_ID=#{resumeId}
+	</select>
+	
 	<!--  병원이 면접요청(offer)한 이력서를 리스팅 -->
 	<select id="listResumeOfferedByHospitalId" resultMap="mapResume">
 		<!-- select R.*, true as scrapped_By_Hospital -->
 		select R.*
 		from USER_RESUME_VIEW R, HOSPITAL_OFFER O, JOB_AD J
 		where
-			R.RESUME_ID = O.RESUME_ID
-			and J.HOSPITAL_ID=O.HOSPITAL_ID
-			and O.HOSPITAL_ID=#{hospitalId}
+			R.RESUME_ID=O.RESUME_ID
+			and J.JOB_AD_ID=O.JOB_AD_ID
+			and J.HOSPITAL_ID=#{hospitalId}
+			and J.USE_YN='Y' -- 공고 유효 기간 확인 필요
 	</select>
 	
 	
@@ -889,7 +914,28 @@
 		)
 	</select>
 	
-	
+	<!--  인재열람 : 현재 버전은 Open된 이력서만 보여준다. 이력서가 closed되고 해당 병원에 지원하지 않은 이력서는 불호함 -->
+	<select id="listResumeSearched" resultMap="mapResume">
+		select *
+		from USER_RESUME_VIEW
+		-- where
+		--	OPEN_YN='Y'
+		order by LAST_MOD_DT desc
+		
+		<if test="startIndexOnPage !=null and itemCntPerPage != null">
+			limit #{startIndexOnPage}, #{itemCntPerPage}
+		</if>
+		<if test="startIndexOnPage ==null or itemCntPerPage == null">
+			limit 0, 10
+		</if>
+	</select>
+	<select id="countResumeSearched" resultType="int">
+		select count(*)
+		from USER_RESUME_VIEW
+		-- where
+		--	OPEN_YN='Y'
+		
+	</select>
 	
 	
 	

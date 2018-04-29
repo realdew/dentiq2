@@ -1,6 +1,7 @@
 package dentiq2.api.controller;
 
 
+import java.util.Hashtable;
 import java.util.List;
 import java.util.Map;
 
@@ -26,6 +27,7 @@ import org.springframework.web.multipart.MultipartFile;
 
 import dentiq2.api.model.Hospital;
 import dentiq2.api.util.FileUtil;
+import dentiq2.api.util.PageInfo;
 import dentiq2.api.util.UserSession;
 import dentiq2.api.util.UserSessionManager;
 import enqual.common.juso.CoordUtil;
@@ -160,7 +162,6 @@ public class HospitalUserController {
 			res.setResponse("OK");
 			
 		} catch(Exception ex) {
-			ex.printStackTrace();
 			res.setException(ex);
 		}
 		
@@ -182,6 +183,41 @@ public class HospitalUserController {
 	/*                                                                                                                        */
 	/**************************************************************************************************************************/
 	
+	
+	
+	// 인재관리 공통 : 이력서에 대하여 스크랩 상태 및 제안 상태  조회
+	@RequestMapping(value="/hospital/{hospitalId}/statusResumeAction/", method=RequestMethod.GET)
+	public ResponseEntity<JsonResponse<Map<String, Long>>> getStatusForScrapAndApply(
+						@PathVariable("hospitalId")							Long hospitalId,
+						@RequestParam(value="resumeId",		required=true)	Long resumeId,
+						HttpServletRequest httpRequest,
+						HttpServletResponse httpResponse) {
+		JsonResponse<Map<String, Long>> res = new JsonResponse<Map<String, Long>>();
+		try {
+			UserSession session = getHospitalUserSession(httpRequest, httpResponse);
+			if ( !session.getHospitalId().equals(hospitalId) )	throw new LogicalException(ErrorCode.AUTH_002);
+			
+			Map<String, Long> result = new Hashtable<String, Long>();
+			
+			// 스크랩 상태 조회
+			int cntScrapped = commonMapper.countResumeScrappedByHospitalIdAndResumeId(hospitalId, resumeId);
+			if ( cntScrapped == 1 )	result.put("scrap", resumeId);
+			
+			// 제안 상태 조회
+			int cntApplied = commonMapper.countResumeOfferedByHospitalIdAndResumeId(hospitalId, resumeId);
+			if ( cntApplied == 1 )	result.put("apply", resumeId);
+		
+			res.setResponse(result);
+		} catch(Exception ex) {
+			res.setException(ex);
+		}
+		return new ResponseEntity<JsonResponse<Map<String, Long>>>(res, HttpStatus.OK);
+	}
+	
+	
+	
+	
+	/**************************************** 지원 인재 조회 ****************************************/
 	// 해당 병원에 지원한 이력서들을 조회한다.
 	@RequestMapping(value="/hospital/{hospitalId}/resumeApplied/", method=RequestMethod.GET)
 	public ResponseEntity<JsonResponse<List<Resume>>> listResumeApplied(
@@ -192,13 +228,10 @@ public class HospitalUserController {
 	
 		JsonResponse<List<Resume>> res = new JsonResponse<List<Resume>>();
 		try {
-			getHospitalUserSession(httpRequest, httpResponse);
+			UserSession session = getHospitalUserSession(httpRequest, httpResponse);
+			if ( !session.getHospitalId().equals(hospitalId) )	throw new LogicalException(ErrorCode.AUTH_002);
 			
-			List<Resume> resumeList = commonMapper.listResumeApplied(hospitalId);
-			
-			markResumeIsScrappedByCertainHospital(hospitalId, resumeList);
-			markResumeIsOfferedByCertainHospital(hospitalId, resumeList);
-			
+			List<Resume> resumeList = commonMapper.listResumeAppliedByHospitalId(hospitalId);
 			res.setResponse(resumeList);
 			
 		} catch(Exception ex) {
@@ -207,6 +240,9 @@ public class HospitalUserController {
 		
 		return new ResponseEntity<JsonResponse<List<Resume>>>(res, HttpStatus.OK);	
 	}
+	
+	
+	
 	
 	
 	
@@ -220,40 +256,10 @@ public class HospitalUserController {
 		
 		JsonResponse<List<Resume>> res = new JsonResponse<List<Resume>>();
 		try {
-			getHospitalUserSession(httpRequest, httpResponse);
+			UserSession session = getHospitalUserSession(httpRequest, httpResponse);
+			if ( !session.getHospitalId().equals(hospitalId) )	throw new LogicalException(ErrorCode.AUTH_002);
 			
-			List<Resume> resumeList = commonMapper.listResumeScrapped(hospitalId);
-			if ( resumeList != null ) for ( Resume resume : resumeList ) resume.setScrappedByCertainHospital(true);
-			
-			markResumeIsOfferedByCertainHospital(hospitalId, resumeList);
-			
-			res.setResponse(resumeList);
-		
-		} catch(Exception ex) {
-			res.setException(ex);
-		}
-		
-		return new ResponseEntity<JsonResponse<List<Resume>>>(res, HttpStatus.OK);	
-	}	
-	@RequestMapping(value="/hospital/{hospitalId}/resumeScrapped/{resumeId}/", method=RequestMethod.POST)
-	public ResponseEntity<JsonResponse<List<Resume>>> addResumeScrapped(
-						@PathVariable("hospitalId")						Long hospitalId,
-						@PathVariable(value="resumeId",	required=true)	Long resumeId,
-						HttpServletRequest httpRequest,
-						HttpServletResponse httpResponse		
-			) {
-		
-		JsonResponse<List<Resume>> res = new JsonResponse<List<Resume>>();
-		try {
-			getHospitalUserSession(httpRequest, httpResponse);
-			
-			commonMapper.addResumeScrapped(hospitalId, resumeId);
-			
-			List<Resume> resumeList = commonMapper.listResumeScrapped(hospitalId);
-			if ( resumeList != null ) for ( Resume resume : resumeList ) resume.setScrappedByCertainHospital(true);
-			
-			markResumeIsOfferedByCertainHospital(hospitalId, resumeList);
-			
+			List<Resume> resumeList = commonMapper.listResumeScrappedByHospitalId(hospitalId);			
 			res.setResponse(resumeList);
 		
 		} catch(Exception ex) {
@@ -262,115 +268,87 @@ public class HospitalUserController {
 		
 		return new ResponseEntity<JsonResponse<List<Resume>>>(res, HttpStatus.OK);	
 	}
-	@RequestMapping(value="/hospital/{hospitalId}/resumeScrapped/{resumeId}/", method=RequestMethod.DELETE)
-	public ResponseEntity<JsonResponse<List<Resume>>> deleteResumeScrapped(
+	@RequestMapping(value="/hospital/{hospitalId}/resumeIdScrapped/{resumeId}/", method=RequestMethod.POST)
+	public ResponseEntity<JsonResponse<Long>> addResumeIdScrapped(
 						@PathVariable("hospitalId")						Long hospitalId,
 						@PathVariable(value="resumeId",	required=true)	Long resumeId,
 						HttpServletRequest httpRequest,
 						HttpServletResponse httpResponse		
 			) {
 		
-		JsonResponse<List<Resume>> res = new JsonResponse<List<Resume>>();
+		JsonResponse<Long> res = new JsonResponse<Long>();
 		try {
-			getHospitalUserSession(httpRequest, httpResponse);
+			UserSession session = getHospitalUserSession(httpRequest, httpResponse);
+			if ( !session.getHospitalId().equals(hospitalId) )	throw new LogicalException(ErrorCode.AUTH_002);
 			
-			commonMapper.deleteResumeScrapped(hospitalId, resumeId);
-			
-			List<Resume> resumeList = commonMapper.listResumeScrapped(hospitalId);
-			if ( resumeList != null ) for ( Resume resume : resumeList ) resume.setScrappedByCertainHospital(true);
-			
-			markResumeIsOfferedByCertainHospital(hospitalId, resumeList);
-			
-			res.setResponse(resumeList);
-		
-		} catch(Exception ex) {
-			res.setException(ex);
-		}
-		
-		return new ResponseEntity<JsonResponse<List<Resume>>>(res, HttpStatus.OK);	
-	}
-	
-	@RequestMapping(value="/hospital/{hospitalId}/resumeScrappedId/", method=RequestMethod.GET)
-	public ResponseEntity<JsonResponse<List<Long>>> listResumeIdScrapped(
-						@PathVariable("hospitalId")			Long hospitalId,
-						HttpServletRequest httpRequest,
-						HttpServletResponse httpResponse		
-			) {		
-		JsonResponse<List<Long>> res = new JsonResponse<List<Long>>();
-		try {
-			getHospitalUserSession(httpRequest, httpResponse);			
-			List<Long> resumeIdList = commonMapper.listResumeIdScrapped(hospitalId);
-			res.setResponse(resumeIdList);		
-		} catch(Exception ex) {
-			res.setException(ex);
-		}
-		
-		return new ResponseEntity<JsonResponse<List<Long>>>(res, HttpStatus.OK);	
-	}	
-	@RequestMapping(value="/hospital/{hospitalId}/resumeScrappedId/{resumeId}/", method=RequestMethod.POST)
-	public ResponseEntity<JsonResponse<List<Long>>> addResumeIdScrapped(
-						@PathVariable("hospitalId")						Long hospitalId,
-						@PathVariable(value="resumeId",	required=true)	Long resumeId,
-						HttpServletRequest httpRequest,
-						HttpServletResponse httpResponse		
-			) {
-		
-		JsonResponse<List<Long>> res = new JsonResponse<List<Long>>();
-		try {
-			getHospitalUserSession(httpRequest, httpResponse);
 			commonMapper.addResumeScrapped(hospitalId, resumeId);
-			
-			List<Long> resumeIdList = commonMapper.listResumeIdScrapped(hospitalId);
-			res.setResponse(resumeIdList);
+			res.setResponse(resumeId);
 		} catch(Exception ex) {
 			res.setException(ex);
 		}		
-		return new ResponseEntity<JsonResponse<List<Long>>>(res, HttpStatus.OK);	
+		return new ResponseEntity<JsonResponse<Long>>(res, HttpStatus.OK);	
 	}
-	@RequestMapping(value="/hospital/{hospitalId}/resumeScrappedId/{resumeId}/", method=RequestMethod.DELETE)
-	public ResponseEntity<JsonResponse<List<Long>>> deleteResumeIdScrapped(
+	@RequestMapping(value="/hospital/{hospitalId}/resumeIdScrapped/{resumeId}/", method=RequestMethod.DELETE)
+	public ResponseEntity<JsonResponse<Long>> deleteResumeIdScrapped(
 						@PathVariable("hospitalId")						Long hospitalId,
 						@PathVariable(value="resumeId",	required=true)	Long resumeId,
 						HttpServletRequest httpRequest,
 						HttpServletResponse httpResponse		
 			) {
 		
-		JsonResponse<List<Long>> res = new JsonResponse<List<Long>>();
+		JsonResponse<Long> res = new JsonResponse<Long>();
 		try {
-			getHospitalUserSession(httpRequest, httpResponse);			
-			commonMapper.deleteResumeScrapped(hospitalId, resumeId);
+			UserSession session = getHospitalUserSession(httpRequest, httpResponse);
+			if ( !session.getHospitalId().equals(hospitalId) )	throw new LogicalException(ErrorCode.AUTH_002);
 			
-			List<Long> resumeIdList = commonMapper.listResumeIdScrapped(hospitalId);
-			res.setResponse(resumeIdList);
+			commonMapper.deleteResumeScrapped(hospitalId, resumeId);
+			res.setResponse(resumeId);
 		} catch(Exception ex) {
 			res.setException(ex);
 		}
 		
-		return new ResponseEntity<JsonResponse<List<Long>>>(res, HttpStatus.OK);	
+		return new ResponseEntity<JsonResponse<Long>>(res, HttpStatus.OK);	
 	}
 	
 	
 	
 	
+	/**************************************** 면접 제안한 인재(이력서) 목록 ****************************************/
 	
-	
-	//TODO 고치자... 뭔가 이상하다.
-	/**************************************** 면접 제안 ****************************************/
-	@RequestMapping(value="/hospital/{hospitalId}/resumeOfferedId/", method=RequestMethod.POST)
-	public ResponseEntity<JsonResponse<List<Map<String, Long>>>> addResumeIdOffered(
+	@RequestMapping(value="/hospital/{hospitalId}/resumeOffered/", method=RequestMethod.GET)
+	public ResponseEntity<JsonResponse<List<Resume>>> listResumeOffered(
 						@PathVariable("hospitalId")						Long hospitalId,
-						@RequestParam(value="jobAdId",	required=true)	Long jobAdId,
-						@RequestParam(value="resumeId",	required=true)	Long resumeId,
 						HttpServletRequest httpRequest,
-						HttpServletResponse httpResponse		
-			) {
+						HttpServletResponse httpResponse
+				) {
 		
-		JsonResponse<List<Map<String, Long>>> res = new JsonResponse<List<Map<String, Long>>>();
+		JsonResponse<List<Resume>> res = new JsonResponse<List<Resume>>();
 		try {
 			UserSession session = getHospitalUserSession(httpRequest, httpResponse);
-			Long hospitalIdOnSession = session.getHospitalId();
-			if ( hospitalId == null ) throw new Exception("병원정보가 등록되지 않았습니다.");
-			if ( !hospitalId.equals(hospitalIdOnSession) ) throw new Exception("병원 ID 오류 [" + hospitalId + "] <> [" + hospitalIdOnSession + "]");
+			if ( !session.getHospitalId().equals(hospitalId) )	throw new LogicalException(ErrorCode.AUTH_002);			
+			
+			List<Resume> resumeList = commonMapper.listResumeOfferedByHospitalId(hospitalId);
+			res.setResponse(resumeList);
+		} catch(Exception ex) {
+			res.setException(ex);
+		}
+		
+		return new ResponseEntity<JsonResponse<List<Resume>>>(res, HttpStatus.OK);
+	}
+	
+	@RequestMapping(value="/hospital/{hospitalId}/resumeIdOffered/", method=RequestMethod.POST)
+	public ResponseEntity<JsonResponse<Map<String, Long>>> addResumeIdOffered(
+						@PathVariable("hospitalId")						Long hospitalId,
+						@RequestParam(value="resumeId",	required=true)	Long resumeId,
+						@RequestParam(value="jobAdId",	required=true)	Long jobAdId,
+						HttpServletRequest httpRequest,
+						HttpServletResponse httpResponse
+				) {
+		
+		JsonResponse<Map<String, Long>> res = new JsonResponse<Map<String, Long>>();
+		try {
+			UserSession session = getHospitalUserSession(httpRequest, httpResponse);
+			if ( !session.getHospitalId().equals(hospitalId) )	throw new LogicalException(ErrorCode.AUTH_002);
 			
 			
 			// 해당 공고가 해당 병원의 것인지를 확인해야 한다.
@@ -378,23 +356,26 @@ public class HospitalUserController {
 				throw new Exception("요청된 공고(" + jobAdId + ")는 해당 병원(" + hospitalId + ")의 것이 아닙니다.");
 			}
 			
+			int updatedRows = commonMapper.addResumeOfferedByJobAdIdAndResumeId(jobAdId, resumeId);
+			if ( updatedRows != 1) throw new Exception("변경된 행이 1행이 아님 [" + updatedRows + "]");
 			
-			commonMapper.addResumeOfferedByJobAdIdAndResumeId(jobAdId, resumeId);
+			Map<String, Long> result = new Hashtable<String, Long>();
+			result.put("resumeId", resumeId);
+			result.put("jobAdId", jobAdId);
 			
-			List<Map<String, Long>> resumeIdList = commonMapper.listResumeOfferedIdAndJobAdIdByHospitalId(hospitalId);
-			res.setResponse(resumeIdList);
-		
+			res.setResponse(result);		
+			
 		} catch(Exception ex) {
 			res.setException(ex);
 		}
 		
-		return new ResponseEntity<JsonResponse<List<Map<String, Long>>>>(res, HttpStatus.OK);	
+		return new ResponseEntity<JsonResponse<Map<String, Long>>>(res, HttpStatus.OK);
 	}
 	
 	
 	
+	
 	/**************************************** 추천 인재 ****************************************/
-	//@RequestMapping(value="/user/{userId}/hospital/listResumeRecommended/", method=RequestMethod.GET)
 	@RequestMapping(value="/hospital/{hospitalId}/resumeRecommended/", method=RequestMethod.GET)
 	public ResponseEntity<JsonResponse<List<Resume>>> listResumeRecommended(
 							@PathVariable("hospitalId")			Long hospitalId,
@@ -404,11 +385,52 @@ public class HospitalUserController {
 		
 		JsonResponse<List<Resume>> res = new JsonResponse<List<Resume>>();
 		try {
-			getHospitalUserSession(httpRequest, httpResponse);
+			UserSession session = getHospitalUserSession(httpRequest, httpResponse);
+			if ( !session.getHospitalId().equals(hospitalId) )	throw new LogicalException(ErrorCode.AUTH_002);
+			
 			List<Resume> resumeList = commonMapper.listResumeRecommended(hospitalId);
-			markResumeIsScrappedByCertainHospital(hospitalId, resumeList);
-			markResumeIsOfferedByCertainHospital(hospitalId, resumeList);
 			res.setResponse(resumeList);
+		
+		} catch(Exception ex) {
+			res.setException(ex);
+		}
+		
+		return new ResponseEntity<JsonResponse<List<Resume>>>(res, HttpStatus.OK);	
+	
+	}
+	
+	
+
+	// 오픈된 이력서 (해당 병원에 지원한 이력서는 불포함 2018.04.26)
+	/**************************************** 인재 열람 ****************************************/
+	@RequestMapping(value="/resume/", method=RequestMethod.GET)
+	public ResponseEntity<JsonResponse<List<Resume>>> listResumeSearched(
+							@RequestParam(value="sidoCode",		required=false)		List<String> sidoCodeList,
+							@RequestParam(value="siguCode",		required=false)		List<String> siguCodeList,
+							@RequestParam(value="attr",			required=false)		List<String> attrStrList,
+			
+							@RequestParam(value="pageNo",		defaultValue="1")	Integer pageNo,
+							@RequestParam(value="pageSize",		required=false)		Integer pageSize,							
+							HttpServletRequest httpRequest,
+							HttpServletResponse httpResponse		
+			) {
+		
+		JsonResponse<List<Resume>> res = new JsonResponse<List<Resume>>();
+		try {
+			getHospitalUserSession(httpRequest, httpResponse);
+			
+			PageInfo pageInfo = new PageInfo(pageNo, pageSize);		// 페이지 정보 생성
+			
+			System.out.println("***********************   " + pageInfo.startIndexOnPage + "  " + pageInfo.itemCntPerPage);
+			List<Resume> resumeList = commonMapper.listResumeSearched(pageInfo.startIndexOnPage, pageInfo.itemCntPerPage);
+			res.setResponse(resumeList);
+			
+			if ( pageNo > 1 ) {		// 첫번째 페이지일 경우에만 전체 개수를 조회한다.
+				int totalItemCnt = commonMapper.countResumeSearched();
+				System.out.println("목록의 전체 개수 : " + totalItemCnt);
+				pageInfo.setTotalItemCnt(totalItemCnt);
+				res.setPageInfo(pageInfo);
+			}
 		
 		} catch(Exception ex) {
 			res.setException(ex);
@@ -417,37 +439,11 @@ public class HospitalUserController {
 		return new ResponseEntity<JsonResponse<List<Resume>>>(res, HttpStatus.OK);	
 	}
 	
-	// 병원이 이력서를 조회하는 경우, 이력서들이 해당 병원에 의하여 스크랩된 것인지를 표시(Resume.scrappedByCertainHospital=true)한다.
-	private void markResumeIsScrappedByCertainHospital(Long hospitalId, List<Resume> resumeList) throws Exception {
-		if ( resumeList == null || resumeList.size() == 0 ) return;
-		
-		List<Long> resumeIdScrappedList = commonMapper.listResumeIdScrapped(hospitalId);
-		if ( resumeIdScrappedList==null ) return;
-				
-		for ( Long resumeIdSrapped : resumeIdScrappedList ) {
-			for ( Resume resume : resumeList ) {
-				if ( resume.getResumeId().equals(resumeIdSrapped) ) {
-					resume.setScrappedByCertainHospital(true);
-				}
-			}
-		}
-	}
 	
-	// 병원이 이력서를 조회하는 경우, 이력서들이 해당 병원에 의하여 이미 면접제안된 것인지를 표시(Resume.offeredByCertainHospital=true)한다.
-	private void markResumeIsOfferedByCertainHospital(Long hospitalId, List<Resume> resumeList) throws Exception {
-		if ( resumeList == null || resumeList.size() == 0 ) return;
-		
-		List<Map<String, Long>> resumeIdOfferedAndJobAdIdList = commonMapper.listResumeOfferedIdAndJobAdIdByHospitalId(hospitalId);
-		if ( resumeIdOfferedAndJobAdIdList==null ) return;
-				
-		for ( Map<String, Long> resumeIdOfferedAndJobAdId : resumeIdOfferedAndJobAdIdList ) {
-			for ( Resume resume : resumeList ) {
-				if ( resume.getResumeId().equals(resumeIdOfferedAndJobAdId.get("resumeId")) ) {
-					resume.setOfferedByCertainHospital(true);
-				}
-			}
-		}
-	}
+	
+	
+	
+	
 	
 	
 	
@@ -702,7 +698,7 @@ public class HospitalUserController {
 			trxMan.commit(trxStatus);				// COMMIT
 		} catch(Exception ex) {
 			res.setException(ex);
-			trxMan.commit(trxStatus);				// COMMIT
+			try { trxMan.rollback(trxStatus); } catch(Exception ignore) { ignore.printStackTrace(); }
 		}
 		
 		return new ResponseEntity<JsonResponse<Hospital>>(res, HttpStatus.OK);	

@@ -94,7 +94,7 @@ public class Resume {
 		@JsonIgnore public String getLicenseJson() throws Exception				{ return JsonUtil.toJson(this.license); }
 		@JsonIgnore public void setLicenseJson(String json) throws Exception	{ this.license = JsonUtil.<List<Map<String, String>>>toGenericObject(json); }
 	
-	@Getter @Setter private String confirmRecommendation;		// Y: 입사제안 받기, N:입사제안 받지 않기
+	//@Getter @Setter private String confirmRecommendation;		// Y: 입사제안 받기, N:입사제안 받지 않기
 	
 	@Getter @Setter private String content;	// 내용
 	

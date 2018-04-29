@@ -116,12 +116,13 @@ public class FirstController {
 			
 			res.setResponse(resume);
 		} catch(Exception ex) {
-			ex.printStackTrace();
 			res.setException(ex);
 		}
 		
 		return new ResponseEntity<JsonResponse<Resume>>(res, HttpStatus.OK);
 	}
+	
+	
 	
 	
 	
@@ -140,15 +141,15 @@ public class FirstController {
 		try {			
 			JobAd jobAd = commonMapper.getJobAdFullyById(jobAdId);
 			
-			// userId가 입력되면, 해당 공고가 관심병원의 것인지를 조회하여서 보여준다.
-			if ( userId!=null ) {
-				int cnt = commonMapper.isJobSeekerSInterestHospital(userId, jobAd.getHospitalId());
-				if ( cnt > 0 )	jobAd.getHospital().setInterestedByUserId(userId);
-			}
+			// 해당 기능 필요 없음 WEB에서 처리함. 이렇게 하려면 관심병원/스크랩여부/지원여부 까지 다 보여주어야 함
+//			// userId가 입력되면, 해당 공고가 관심병원의 것인지를 조회하여서 보여준다.
+//			if ( userId!=null ) {
+//				int cnt = commonMapper.isJobSeekerSInterestHospital(userId, jobAd.getHospitalId());
+//				if ( cnt > 0 )	jobAd.getHospital().setInterestedByUserId(userId);
+//			}
 			
 			res.setResponse(jobAd);
 		} catch(Exception ex) {
-			ex.printStackTrace();
 			res.setException(ex);
 		}
 		
@@ -181,7 +182,6 @@ public class FirstController {
 			
 			res.setResponse(summary);
 		} catch(Exception ex) {
-			ex.printStackTrace();
 			res.setException(ex);
 		}
 		
@@ -221,7 +221,6 @@ public class FirstController {
 			List<JobAd> jobAdList = commonMapper.listJobAd(sidoCodeList, siguCodeList, jobAttrGroupList, adType, pageInfo.startIndexOnPage, pageInfo.itemCntPerPage);
 			res.setResponse(jobAdList);
 		} catch(Exception ex) {
-			ex.printStackTrace();
 			res.setException(ex);
 		}
 		

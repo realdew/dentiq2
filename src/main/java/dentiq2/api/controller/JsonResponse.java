@@ -7,6 +7,7 @@ import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonInclude.Include;
 
 import dentiq2.api.LogicalException;
+import dentiq2.api.util.PageInfo;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -21,7 +22,8 @@ public class JsonResponse<T> {
 	
 	
 	@Getter @Setter private CommonHeader			_COMMON_HEADER_;
-	@Getter @Setter private PageableResponseHeader	_PAGEABLE_RESPONSE_HEADER_;
+	//@Getter @Setter private PageableResponseHeader	_PAGEABLE_RESPONSE_HEADER_;
+	@Getter 		private PageInfo				_PAGEABLE_RESPONSE_HEADER_;
 	@Getter 		private T						_RESPONSE_;
 	
 	public JsonResponse() {}
@@ -30,7 +32,7 @@ public class JsonResponse<T> {
 		this._COMMON_HEADER_ = new CommonHeader();
 		this._RESPONSE_ = response;
 	}
-	public JsonResponse(PageableResponseHeader pageableResponseHeader, T response) {
+	public JsonResponse(PageInfo pageableResponseHeader, T response) {
 		this._COMMON_HEADER_ = new CommonHeader();
 		this._PAGEABLE_RESPONSE_HEADER_ = pageableResponseHeader;
 		this._RESPONSE_ = response;
@@ -38,6 +40,10 @@ public class JsonResponse<T> {
 	
 	public void setResponse(T response) {
 		this._RESPONSE_ = response;
+	}
+	
+	public void setPageInfo(PageInfo pageInfo) {
+		this._PAGEABLE_RESPONSE_HEADER_ = pageInfo;
 	}
 	
 	public void setException(Exception ex) {
@@ -59,7 +65,7 @@ public class JsonResponse<T> {
 		
 		//TODO
 		ex.printStackTrace();
-		ex.printStackTrace(System.out);
+		//ex.printStackTrace(System.out);
 	}
 	
 
@@ -72,6 +78,7 @@ class CommonHeader {
 	@Getter @Setter private Object additionalInfo;
 }
 
+/*
 @JsonInclude(Include.NON_NULL)
 class PageableResponseHeader {
 	
@@ -115,3 +122,4 @@ class PageableResponseHeader {
 			throw new Exception("페이지 번호 초과, pageNo[" + this.pageNo + "] totalPage[" + this.totalPageCnt + "]");
 	}
 }
+*/

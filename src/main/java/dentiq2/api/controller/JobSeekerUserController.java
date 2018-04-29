@@ -1,7 +1,9 @@
 package dentiq2.api.controller;
 
 
+import java.util.Hashtable;
 import java.util.List;
+import java.util.Map;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -241,7 +243,7 @@ public class JobSeekerUserController {
 			getJobSeekerUserSession(httpRequest, httpResponse);
 			
 			List<JobAd> jobAdList = commonMapper.listAppliedJobAd(userId);
-			markJobAdIsAppliedByCertainJobSeeker(userId, jobAdList);
+			//markJobAdIsAppliedByCertainJobSeeker(userId, jobAdList);
 			res.setResponse(jobAdList);
 		} catch(Exception ex) {
 			res.setException(ex);
@@ -249,68 +251,116 @@ public class JobSeekerUserController {
 		return new ResponseEntity<JsonResponse<List<JobAd>>>(res, HttpStatus.OK);
 	}
 	
-	@RequestMapping(value="/user/{userId}/appliedJobAdId/", method=RequestMethod.GET)
-	public ResponseEntity<JsonResponse<List<Long>>> listAppliedJobAdId(
-				@PathVariable("userId")		Long userId,
-				HttpServletRequest httpRequest,
-				HttpServletResponse httpResponse) {		
-		JsonResponse<List<Long>> res = new JsonResponse<List<Long>>();
-		try {
-			getJobSeekerUserSession(httpRequest, httpResponse);
-			
-			List<Long> appliedJobAdIdList = commonMapper.listAppliedJobAdId(userId);
-			res.setResponse(appliedJobAdIdList);
-		} catch(Exception ex) {
-			res.setException(ex);
-		}
-		return new ResponseEntity<JsonResponse<List<Long>>>(res, HttpStatus.OK);			
-	}
+//	@RequestMapping(value="/user/{userId}/appliedJobAdId/", method=RequestMethod.GET)
+//	public ResponseEntity<JsonResponse<List<Long>>> listAppliedJobAdId(
+//				@PathVariable("userId")		Long userId,
+//				HttpServletRequest httpRequest,
+//				HttpServletResponse httpResponse) {		
+//		JsonResponse<List<Long>> res = new JsonResponse<List<Long>>();
+//		try {
+//			getJobSeekerUserSession(httpRequest, httpResponse);
+//			
+//			List<Long> appliedJobAdIdList = commonMapper.listAppliedJobAdId(userId);
+//			res.setResponse(appliedJobAdIdList);
+//		} catch(Exception ex) {
+//			res.setException(ex);
+//		}
+//		return new ResponseEntity<JsonResponse<List<Long>>>(res, HttpStatus.OK);			
+//	}
+//	@RequestMapping(value="/user/{userId}/appliedJobAdId/{jobAdId}/", method=RequestMethod.POST)
+//	public ResponseEntity<JsonResponse<List<Long>>> addAppliedJobAd(
+//				@PathVariable("userId")								Long userId,
+//				@PathVariable("jobAdId")							Long jobAdId,
+//				HttpServletRequest httpRequest,
+//				HttpServletResponse httpResponse
+//					) {
+//		JsonResponse<List<Long>> res = new JsonResponse<List<Long>>();
+//		try {
+//			getJobSeekerUserSession(httpRequest, httpResponse);
+//			
+//			// 이력서가 작성되었는지 먼저 검토하여야 한다.
+//			Long resumeId = commonMapper.getResumeIdOfUser(userId);
+//			if ( resumeId == null ) throw new LogicalException(ErrorCode.USER_602);
+//			
+//			//TODO 인서트하기 전에 이미 기존재하는지 확인 필요. 현재는 개발 중이므로, 에러 발견을 위해서 하지 않는다.
+//			// int cnt = commonMapper.has~~~ 이미 인서트되어 있는지 확인
+//			
+//			commonMapper.insertAppliedJobAd(userId, jobAdId);
+//			
+//			List<Long> appliedJobAdIdList = commonMapper.listAppliedJobAdId(userId);
+//			res.setResponse(appliedJobAdIdList);
+//		} catch(Exception ex) {
+//			res.setException(ex);
+//		}
+//		return new ResponseEntity<JsonResponse<List<Long>>>(res, HttpStatus.OK);			
+//	}
+//	@RequestMapping(value="/user/{userId}/appliedJobAdId/{jobAdId}/", method=RequestMethod.DELETE)
+//	public ResponseEntity<JsonResponse<List<Long>>> deleteAppliedJobAd(
+//				@PathVariable("userId")							Long userId,
+//				@PathVariable("jobAdId")						Long jobAdId,
+//				HttpServletRequest httpRequest,
+//				HttpServletResponse httpResponse
+//					) {
+//		JsonResponse<List<Long>> res = new JsonResponse<List<Long>>();
+//		try {
+//			getJobSeekerUserSession(httpRequest, httpResponse);
+//			
+//			commonMapper.deleteAppliedJobAd(userId, jobAdId);
+//			
+//			List<Long> appliedJobAdIdList = commonMapper.listAppliedJobAdId(userId);
+//			res.setResponse(appliedJobAdIdList);
+//		} catch(Exception ex) {
+//			res.setException(ex);
+//		}
+//		return new ResponseEntity<JsonResponse<List<Long>>>(res, HttpStatus.OK);			
+//	}
 	@RequestMapping(value="/user/{userId}/appliedJobAdId/{jobAdId}/", method=RequestMethod.POST)
-	public ResponseEntity<JsonResponse<List<Long>>> addAppliedJobAd(
+	public ResponseEntity<JsonResponse<Long>> addAppliedJobAd(
 				@PathVariable("userId")								Long userId,
 				@PathVariable("jobAdId")							Long jobAdId,
 				HttpServletRequest httpRequest,
 				HttpServletResponse httpResponse
 					) {
-		JsonResponse<List<Long>> res = new JsonResponse<List<Long>>();
+		JsonResponse<Long> res = new JsonResponse<Long>();
 		try {
-			getJobSeekerUserSession(httpRequest, httpResponse);
+			UserSession session = getJobSeekerUserSession(httpRequest, httpResponse);
+			if ( !session.getUserId().equals(userId) )	throw new LogicalException(ErrorCode.AUTH_102);
 			
 			// 이력서가 작성되었는지 먼저 검토하여야 한다.
 			Long resumeId = commonMapper.getResumeIdOfUser(userId);
 			if ( resumeId == null ) throw new LogicalException(ErrorCode.USER_602);
 			
-			//TODO 인서트하기 전에 이미 기존재하는지 확인 필요. 현재는 개발 중이므로, 에러 발견을 위해서 하지 않는다.
-			// int cnt = commonMapper.has~~~ 이미 인서트되어 있는지 확인
 			
-			commonMapper.insertAppliedJobAd(userId, jobAdId);
 			
-			List<Long> appliedJobAdIdList = commonMapper.listAppliedJobAdId(userId);
-			res.setResponse(appliedJobAdIdList);
+			int updatedRows = commonMapper.insertAppliedJobAd(userId, jobAdId);
+			if (  updatedRows != 1 )	throw new Exception("변경된 행이 1행이 아님 [" + updatedRows + "]");
+						
+			res.setResponse(jobAdId);
 		} catch(Exception ex) {
 			res.setException(ex);
 		}
-		return new ResponseEntity<JsonResponse<List<Long>>>(res, HttpStatus.OK);			
+		return new ResponseEntity<JsonResponse<Long>>(res, HttpStatus.OK);
 	}
 	@RequestMapping(value="/user/{userId}/appliedJobAdId/{jobAdId}/", method=RequestMethod.DELETE)
-	public ResponseEntity<JsonResponse<List<Long>>> deleteAppliedJobAd(
+	public ResponseEntity<JsonResponse<Long>> deleteAppliedJobAd(
 				@PathVariable("userId")							Long userId,
 				@PathVariable("jobAdId")						Long jobAdId,
 				HttpServletRequest httpRequest,
 				HttpServletResponse httpResponse
 					) {
-		JsonResponse<List<Long>> res = new JsonResponse<List<Long>>();
+		JsonResponse<Long> res = new JsonResponse<Long>();
 		try {
-			getJobSeekerUserSession(httpRequest, httpResponse);
+			UserSession session = getJobSeekerUserSession(httpRequest, httpResponse);
+			if ( !session.getUserId().equals(userId) )	throw new LogicalException(ErrorCode.AUTH_102);
 			
-			commonMapper.deleteAppliedJobAd(userId, jobAdId);
-			
-			List<Long> appliedJobAdIdList = commonMapper.listAppliedJobAdId(userId);
-			res.setResponse(appliedJobAdIdList);
+			int updatedRows = commonMapper.deleteAppliedJobAd(userId, jobAdId);
+			if (  updatedRows != 1 )	throw new Exception("변경된 행이 1행이 아님 [" + updatedRows + "]");
+						
+			res.setResponse(jobAdId);
 		} catch(Exception ex) {
 			res.setException(ex);
 		}
-		return new ResponseEntity<JsonResponse<List<Long>>>(res, HttpStatus.OK);			
+		return new ResponseEntity<JsonResponse<Long>>(res, HttpStatus.OK);
 	}
 	
 	
@@ -332,7 +382,6 @@ public class JobSeekerUserController {
 			getJobSeekerUserSession(httpRequest, httpResponse);
 			
 			List<JobAd> jobAdList = commonMapper.listInterestHospitalJobAd(userId);
-			markJobAdIsAppliedByCertainJobSeeker(userId, jobAdList);
 			res.setResponse(jobAdList);
 		} catch(Exception ex) {
 			res.setException(ex);
@@ -340,66 +389,87 @@ public class JobSeekerUserController {
 		return new ResponseEntity<JsonResponse<List<JobAd>>>(res, HttpStatus.OK);
 	}
 	
-	/** 관심병원 ID 목록 **/
-	@RequestMapping(value="/user/{userId}/interestHospitalId/", method=RequestMethod.GET)
-	public ResponseEntity<JsonResponse<List<Long>>> listInterstHospitalId(
-				@PathVariable("userId")		Long userId,
-				HttpServletRequest httpRequest,
-				HttpServletResponse httpResponse) {		
-		JsonResponse<List<Long>> res = new JsonResponse<List<Long>>();
-		try {
-			getJobSeekerUserSession(httpRequest, httpResponse);
-			
-			List<Long> interestHospitalIdList = commonMapper.listInterestHospitalId(userId);
-			res.setResponse(interestHospitalIdList);
-		} catch(Exception ex) {
-			res.setException(ex);
-		}
-		return new ResponseEntity<JsonResponse<List<Long>>>(res, HttpStatus.OK);			
-	}
 	@RequestMapping(value="/user/{userId}/interestHospitalId/{hospitalId}/", method=RequestMethod.POST)
-	public ResponseEntity<JsonResponse<List<Long>>> addInterestHospitalId(
+	public ResponseEntity<JsonResponse<Long>> addInterestHospitalId(
 				@PathVariable("userId")							Long userId,
 				@PathVariable("hospitalId")						Long hospitalId,
-				@RequestParam(value="memo",		required=false)	String memo,
 				HttpServletRequest httpRequest,
 				HttpServletResponse httpResponse
 					) {
-		JsonResponse<List<Long>> res = new JsonResponse<List<Long>>();
+		JsonResponse<Long> res = new JsonResponse<Long>();
 		try {
-			getJobSeekerUserSession(httpRequest, httpResponse);
+			UserSession session = getJobSeekerUserSession(httpRequest, httpResponse);
+			if ( !session.getUserId().equals(userId) )	throw new LogicalException(ErrorCode.AUTH_102);
 			
-			commonMapper.insertInterestHospital(userId, hospitalId);
-			
-			List<Long> interestHospitalIdList = commonMapper.listInterestHospitalId(userId);
-			res.setResponse(interestHospitalIdList);
+			int updatedRows = commonMapper.insertInterestHospital(userId, hospitalId);
+			if (  updatedRows != 1 )	throw new Exception("변경된 행이 1행이 아님 [" + updatedRows + "]");
+						
+			res.setResponse(hospitalId);
 		} catch(Exception ex) {
 			res.setException(ex);
 		}
-		return new ResponseEntity<JsonResponse<List<Long>>>(res, HttpStatus.OK);			
+		return new ResponseEntity<JsonResponse<Long>>(res, HttpStatus.OK);			
 	}
 	@RequestMapping(value="/user/{userId}/interestHospitalId/{hospitalId}/", method=RequestMethod.DELETE)
-	public ResponseEntity<JsonResponse<List<Long>>> deleteInterestHospitalId(
+	public ResponseEntity<JsonResponse<Long>> deleteInterestHospitalId(
 				@PathVariable("userId")							Long userId,
 				@PathVariable("hospitalId")						Long hospitalId,
 				HttpServletRequest httpRequest,
 				HttpServletResponse httpResponse
 					) {
-		JsonResponse<List<Long>> res = new JsonResponse<List<Long>>();
+		JsonResponse<Long> res = new JsonResponse<Long>();
 		try {
-			getJobSeekerUserSession(httpRequest, httpResponse);
+			UserSession session = getJobSeekerUserSession(httpRequest, httpResponse);
+			if ( !session.getUserId().equals(userId) )	throw new LogicalException(ErrorCode.AUTH_102);
 			
-			commonMapper.deleteInterestHospital(userId, hospitalId);
-			
-			List<Long> interestHospitalIdList = commonMapper.listInterestHospitalId(userId);
-			res.setResponse(interestHospitalIdList);
+			int updatedRows = commonMapper.deleteInterestHospital(userId, hospitalId);
+			if (  updatedRows != 1 )	throw new Exception("변경된 행이 1행이 아님 [" + updatedRows + "]");
+						
+			res.setResponse(hospitalId);
 		} catch(Exception ex) {
 			res.setException(ex);
 		}
-		return new ResponseEntity<JsonResponse<List<Long>>>(res, HttpStatus.OK);			
+		return new ResponseEntity<JsonResponse<Long>>(res, HttpStatus.OK);			
 	}
 	
 	
+	
+	
+	
+	// 공고에 대하여 스크랩 상태 및 지원 상태 / 관심병원 여부 조회
+	@RequestMapping(value="/user/{userId}/statusJobAdAction/", method=RequestMethod.GET)
+	public ResponseEntity<JsonResponse<Map<String, Long>>> getStatusForScrapAndApply(
+						@PathVariable("userId") Long userId,
+						@RequestParam(value="jobAdId",		required=true)	Long jobAdId,
+						HttpServletRequest httpRequest,
+						HttpServletResponse httpResponse) {
+		JsonResponse<Map<String, Long>> res = new JsonResponse<Map<String, Long>>();
+		try {
+			UserSession session = getJobSeekerUserSession(httpRequest, httpResponse);
+			if ( !session.getUserId().equals(userId) )	throw new LogicalException(ErrorCode.AUTH_102);
+			
+			Map<String, Long> result = new Hashtable<String, Long>();
+			
+			// 스크랩 상태 조회
+			int cntScrapped = commonMapper.countByScrappedJobAdId(userId, jobAdId);
+			if ( cntScrapped == 1 )	result.put("scrap", jobAdId);
+			
+			// 지원 상태 조회
+			int cntApplied = commonMapper.countByAppliedJobAdId(userId, jobAdId);
+			if ( cntApplied == 1 )	result.put("apply", jobAdId);
+			
+			// 관심병원 조회
+			int cntInterestHospital = commonMapper.countByInterestHospitalJobAdId(userId, jobAdId);
+			if ( cntInterestHospital == 1 )	result.put("interestHospital", jobAdId);
+			
+			
+			
+			res.setResponse(result);
+		} catch(Exception ex) {
+			res.setException(ex);
+		}
+		return new ResponseEntity<JsonResponse<Map<String, Long>>>(res, HttpStatus.OK);
+	}
 	
 	
 	/**************************************************************************************************************************/
@@ -412,14 +482,14 @@ public class JobSeekerUserController {
 	public ResponseEntity<JsonResponse<List<JobAd>>> listScrappedJobAd(
 				@PathVariable("userId") Long userId,
 				HttpServletRequest httpRequest,
-				HttpServletResponse httpResponse) {		
+				HttpServletResponse httpResponse) {
 		
 		JsonResponse<List<JobAd>> res = new JsonResponse<List<JobAd>>();
 		try {
-			getJobSeekerUserSession(httpRequest, httpResponse);
+			UserSession session = getJobSeekerUserSession(httpRequest, httpResponse);
+			if ( !session.getUserId().equals(userId) )	throw new LogicalException(ErrorCode.AUTH_102);
 			
 			List<JobAd> jobAdList = commonMapper.listScrappedJobAd(userId);
-			markJobAdIsAppliedByCertainJobSeeker(userId, jobAdList);
 			res.setResponse(jobAdList);
 		} catch(Exception ex) {
 			res.setException(ex);
@@ -427,64 +497,47 @@ public class JobSeekerUserController {
 		return new ResponseEntity<JsonResponse<List<JobAd>>>(res, HttpStatus.OK);
 	}
 	
-	/** 스크랩 공고 목록(only JOB_AD_ID) **/
-	@RequestMapping(value="/user/{userId}/scrappedJobAdId/", method=RequestMethod.GET)
-	public ResponseEntity<JsonResponse<List<Long>>> listScrappedJobAdId(
-				@PathVariable("userId")		Long userId,
-				HttpServletRequest httpRequest,
-				HttpServletResponse httpResponse) {		
-		JsonResponse<List<Long>> res = new JsonResponse<List<Long>>();
-		try {
-			getJobSeekerUserSession(httpRequest, httpResponse);
-			
-			List<Long> scrappedJobAdIdList = commonMapper.listScrappedJobAdId(userId);
-			res.setResponse(scrappedJobAdIdList);
-		} catch(Exception ex) {
-			res.setException(ex);
-		}
-		return new ResponseEntity<JsonResponse<List<Long>>>(res, HttpStatus.OK);			
-	}
 	@RequestMapping(value="/user/{userId}/scrappedJobAdId/{jobAdId}/", method=RequestMethod.POST)
-	public ResponseEntity<JsonResponse<List<Long>>> addScrappedJobAdId(
-				@PathVariable("userId")							Long userId,
-				@PathVariable("jobAdId")						Long jobAdId,
-				@RequestParam(value="memo",		required=false)	String memo,
-				HttpServletRequest httpRequest,
-				HttpServletResponse httpResponse
+	public ResponseEntity<JsonResponse<Long>> addScrappedJobAdId(
+								@PathVariable("userId")				Long userId,
+								@PathVariable("jobAdId")			Long jobAdId,
+								HttpServletRequest httpRequest,
+								HttpServletResponse httpResponse
 					) {
-		JsonResponse<List<Long>> res = new JsonResponse<List<Long>>();
+		JsonResponse<Long> res = new JsonResponse<Long>();
 		try {
-			getJobSeekerUserSession(httpRequest, httpResponse);
+			UserSession session = getJobSeekerUserSession(httpRequest, httpResponse);
+			if ( !session.getUserId().equals(userId) )	throw new LogicalException(ErrorCode.AUTH_102);
 			
-			commonMapper.insertScrappedJobAd(userId, jobAdId);
-			
-			List<Long> scrappedJobAdIdList = commonMapper.listScrappedJobAdId(userId);
-			res.setResponse(scrappedJobAdIdList);
+			int updatedRows = commonMapper.insertScrappedJobAd(userId, jobAdId);
+			if (  updatedRows != 1 )	throw new Exception("변경된 행이 1행이 아님 [" + updatedRows + "]");
+						
+			res.setResponse(jobAdId);
 		} catch(Exception ex) {
 			res.setException(ex);
 		}
-		return new ResponseEntity<JsonResponse<List<Long>>>(res, HttpStatus.OK);			
+		return new ResponseEntity<JsonResponse<Long>>(res, HttpStatus.OK);			
 	}
 	@RequestMapping(value="/user/{userId}/scrappedJobAdId/{jobAdId}/", method=RequestMethod.DELETE)
-	public ResponseEntity<JsonResponse<List<Long>>> deleteScrappedJobAdId(
+	public ResponseEntity<JsonResponse<Long>> deleteScrappedJobAdId(
 				@PathVariable("userId")							Long userId,
 				@PathVariable("jobAdId")						Long jobAdId,
-				@RequestParam(value="memo",		required=false)	String memo,
 				HttpServletRequest httpRequest,
 				HttpServletResponse httpResponse
 					) {
-		JsonResponse<List<Long>> res = new JsonResponse<List<Long>>();
+		JsonResponse<Long> res = new JsonResponse<Long>();
 		try {
-			getJobSeekerUserSession(httpRequest, httpResponse);
+			UserSession session = getJobSeekerUserSession(httpRequest, httpResponse);
+			if ( !session.getUserId().equals(userId) )	throw new LogicalException(ErrorCode.AUTH_102);
 			
-			commonMapper.deleteScrappedJobAd(userId, jobAdId);
-			
-			List<Long> scrappedJobAdIdList = commonMapper.listScrappedJobAdId(userId);
-			res.setResponse(scrappedJobAdIdList);
+			int updatedRows = commonMapper.deleteScrappedJobAd(userId, jobAdId);
+			if (  updatedRows != 1 )	throw new Exception("변경된 행이 1행이 아님 [" + updatedRows + "]");
+						
+			res.setResponse(jobAdId);
 		} catch(Exception ex) {
 			res.setException(ex);
 		}
-		return new ResponseEntity<JsonResponse<List<Long>>>(res, HttpStatus.OK);			
+		return new ResponseEntity<JsonResponse<Long>>(res, HttpStatus.OK);			
 	}
 	
 	
@@ -501,50 +554,16 @@ public class JobSeekerUserController {
 		
 		JsonResponse<List<JobAd>> res = new JsonResponse<List<JobAd>>();
 		try {
-			getJobSeekerUserSession(httpRequest, httpResponse);
+			UserSession session = getJobSeekerUserSession(httpRequest, httpResponse);
+			if ( !session.getUserId().equals(userId) )	throw new LogicalException(ErrorCode.AUTH_102);
 			
 			List<JobAd> jobAdList = commonMapper.listOfferedJobAdByUserId(userId);
-			markJobAdIsAppliedByCertainJobSeeker(userId, jobAdList);
 			res.setResponse(jobAdList);
 		} catch(Exception ex) {
 			res.setException(ex);
 		}
 		return new ResponseEntity<JsonResponse<List<JobAd>>>(res, HttpStatus.OK);
 	}
-	
-	
-	
-	// 개인회원이 공고를 조회하는 경우, 공고들이 해당 회원에 의하여 이미 지원된 것인지를 표시(Resume.offeredByCertainHospital=true)한다.
-	// user_interaction.html에서 사용한다.
-	private void markJobAdIsAppliedByCertainJobSeeker(Long jobSeekerId, List<JobAd> jobAdList) throws Exception {
-		if ( jobAdList == null || jobAdList.size() == 0 ) return;
-				
-		List<Long> jobAdIdAppliedList = commonMapper.listAppliedJobAdId(jobSeekerId);
-		if ( jobAdIdAppliedList==null ) return;
-		for ( Long jobAdIdApplied : jobAdIdAppliedList ) {
-			for ( JobAd jobAd : jobAdList ) {
-				if ( jobAd.getJobAdId().equals(jobAdIdApplied) ) {
-					jobAd.setAppliedByCertainJobSeeker(true);
-				}
-			}
-		}
-	}
-	
-//	// 개인회원이 공고를 조회하는 경우, 공고들이 해당 회원에 의하여 스크랩된 것인지를 표시(Resume.offeredByCertainHospital=true)한다.
-//	// user_interaction.html에서 사용한다.
-//	private void markJobAdIsScrappedByCertainJobSeeker(Long jobSeekerId, List<JobAd> jobAdList) throws Exception {
-//		if ( jobAdList == null || jobAdList.size() == 0 ) return;
-//				
-//		List<Long> jobAdIdAppliedList = commonMapper.listScrappedJobAdId(jobSeekerId);
-//		if ( jobAdIdAppliedList==null ) return;
-//		for ( Long jobAdIdApplied : jobAdIdAppliedList ) {
-//			for ( JobAd jobAd : jobAdList ) {
-//				if ( jobAd.getJobAdId().equals(jobAdIdApplied) ) {
-//					jobAd.setScrappedByCertainJobSeeker(true);
-//				}
-//			}
-//		}
-//	}
 	
 	
 	
