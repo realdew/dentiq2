@@ -577,7 +577,7 @@
 			</if>
 			
 		<!-- order by JOB_AD_ID desc, MEMBERSHIP_TYPE desc, HIRING_TERM_TYPE desc, HIRING_END_DATE desc -->
-		order by JOB_AD_ID desc
+		order by HIRING_TERM_TYPE desc, HIRING_END_DATE
 		
 		<if test="startIndexOnPage !=null and itemCntPerPage != null">
 			limit #{startIndexOnPage}, #{itemCntPerPage}
@@ -797,8 +797,13 @@
 	/*********************************************************************************************************************** -->
 	
 	<select id="listJobAdOfHospital" resultMap="mapJobAd">
-		select A.* from JOB_AD_LIST_VIEW A
-		where HOSPITAL_ID=#{hospitalId}
+		select J.*, H.*
+		from
+			JOB_AD J, HOSPITAL H
+		where
+			J.HOSPITAL_ID=#{hospitalId} and
+			H.HOSPITAL_ID=#{hospitalId} and
+			H.HOSPITAL_ID=J.HOSPITAL_ID
 	</select>
 	
 	<!-- 병원 ID로 해당 병원에 지원한 이력서를 리스팅 -->

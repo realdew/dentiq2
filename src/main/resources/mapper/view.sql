@@ -50,7 +50,16 @@ from
 	JOB_AD J,
 	HOSPITAL H
 where
-	J.HOSPITAL_ID = H.HOSPITAL_ID
+	J.HOSPITAL_ID = H.HOSPITAL_ID and
+	(
+		( HIRING_TERM_TYPE='2' and J.HIRING_START_DATE<=DATE_FORMAT(CURDATE(), '%Y%m%d') and J.HIRING_END_DATE>=DATE_FORMAT(CURDATE(), '%Y%m%d') )
+		or
+		HIRING_TERM_TYPE='1'
+	) and
+	
+	H.USE_YN='Y' and 
+	J.USE_YN='Y'and
+	J.AD_STATUS='A'
 	-- and HIRING_END_DATE와 HIRING_END_TIME이 아직 도래하지 않은 것을 찾는다.
 	-- and AD_STATUS가 'A'인 것을 찾는다.
 	-- and 병원 USE_YN='Y', 공고 USE_YN='Y'
@@ -67,4 +76,6 @@ select
 	U.PROFILE_IMAGE_YN,
 	R.*
 from (USER_RESUME R join USER U) 
-where R.USER_ID = U.USER_ID and U.USE_YN = 'Y'
+where
+	R.USER_ID = U.USER_ID and U.USE_YN = 'Y' and
+	R.USE_YN='Y'
