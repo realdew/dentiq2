@@ -110,7 +110,11 @@
 		<result property="defaultHrOfficerName"		column="DEFAULT_HR_OFFICER_NAME" />
 		<result property="defaultHrEmail"			column="DEFAULT_HR_EMAIL" />
 		
-		<result property="logoImageYn"			column="LOGO_IMAGE_YN" />
+		<result property="logoImageYn"				column="LOGO_IMAGE_YN" />
+		
+		<result property="userEmail"				column="USER_EMAIL" />
+		
+		
 	    
 	    <association property="location"			resultMap="mapLocation" />
 	</resultMap>
@@ -697,11 +701,11 @@
 	
 	
 	<select id="getResumeById" resultMap="mapResume">
-		select * from USER_RESUME_VIEW where RESUME_ID=#{resumeId}
+		select * from USER_RESUME_VIEW_ALL where RESUME_ID=#{resumeId}
 	</select>
 	
 	<select id="getResumeByUserId" resultMap="mapResume">
-		select * from USER_RESUME_VIEW where USER_ID=#{userId}
+		select * from USER_RESUME_VIEW_ALL where USER_ID=#{userId}
 	</select>
 	
 	
@@ -784,7 +788,7 @@
         select * from HOSPITAL where USER_ID=#{userId}
     </select>
     <select id="getHospitalBasicInfoByUserId" resultMap="mapHospital"> <!-- 주의 : 사용자가 n명인 경우, 여기서의 email은 사용자의 email이 아니고 병원의 대표 email임 -->
-        select H.HOSPITAL_ID, H.HOSPITAL_EMAIL, H.HOSPITAL_NAME, H.LOGO_IMAGE_YN, U.USER_EMAIL from HOSPITAL H, USER U where H.USER_ID=#{userId} and U.USER_ID=H.USER_ID
+        select H.HOSPITAL_ID, H.HOSPITAL_EMAIL, H.HOSPITAL_NAME, H.LOGO_IMAGE_YN, U.EMAIL as USER_EMAIL from HOSPITAL H, USER U where H.USER_ID=#{userId} and U.USER_ID=H.USER_ID
     </select>
 	
 	

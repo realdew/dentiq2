@@ -32,6 +32,7 @@ public class Hospital {
 	@Getter @Setter private String membershipType;				// 회원유형(1:무료회원, 2:연간회원)	
 
 	@Getter @Setter private Long userId;						// 사용자 ID			USER_ID
+	@Getter @Setter private String userEmail;
 	
 	@Getter @Setter private String hospitalName;				// 병원명				HOSPITAL_NAME	
 		
