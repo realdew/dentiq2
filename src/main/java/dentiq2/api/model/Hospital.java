@@ -19,6 +19,9 @@ import lombok.Setter;
 @JsonInclude(Include.NON_NULL)
 public class Hospital {
 	
+	public static final String MEMBERSHIP_NORMAL = "1";		// 일반회원
+	public static final String MEMBERSHIP_ANNUAL = "2";		// 연간회원
+	
 	@Getter @Setter private Location location;
 	
 		

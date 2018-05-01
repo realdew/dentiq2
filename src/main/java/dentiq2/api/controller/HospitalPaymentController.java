@@ -20,6 +20,7 @@ import org.springframework.web.bind.annotation.RestController;
 import dentiq2.api.ErrorCode;
 import dentiq2.api.LogicalException;
 import dentiq2.api.mapper.CommonMapper;
+import dentiq2.api.model.Hospital;
 import dentiq2.api.model.PaymentArgument;
 import dentiq2.api.util.UserSession;
 
@@ -71,8 +72,8 @@ public class HospitalPaymentController {
 						HttpServletResponse httpResponse) {
 		JsonResponse<PaymentArgument> res = new JsonResponse<PaymentArgument>();
 		try {
-//			UserSession session = getHospitalUserSession(httpRequest, httpResponse);
-//			if ( !session.getHospitalId().equals(hospitalId) )	throw new LogicalException(ErrorCode.AUTH_002);
+			UserSession session = getHospitalUserSession(httpRequest, httpResponse);
+			if ( !session.getHospitalId().equals(hospitalId) )	throw new LogicalException(ErrorCode.AUTH_002);
 			
 			//String channelId = session.getChannelId();
 			String channelId = "WEB01";
@@ -82,8 +83,14 @@ public class HospitalPaymentController {
 			
 			String buyer_email = buyerInfo.get("HOSPITAL_EMAIL");
 			String buyer_name  = buyerInfo.get("BIZ_REG_NAME");
-			if ( buyer_email==null || buyer_email.trim().equals("") || buyer_name==null || buyer_name.trim().equals("") )
+			if ( buyer_email==null || buyer_email.trim().equals("") || buyer_name==null || buyer_name.trim().equals("") ) {
 				throw new Exception("병원 정보에 누락이 있습니다. [" + buyer_email + "] [" + buyer_name + "]");
+			}
+			if ( buyerInfo.get("MEMBERSHIP_TYPE").equals(Hospital.MEMBERSHIP_ANNUAL) ) {
+				throw new Exception("이미 연간회원입니다.");
+			}
+			
+			
 			
 			String merchant_uid	= generateMerchantUid(hospitalId, channelId, API_SERVER_ID);
 			Long amount		= (long) 104;
@@ -131,8 +138,6 @@ public class HospitalPaymentController {
 			//String channelId = session.getChannelId();
 			String channelId = "WEB01";
 			
-			//if ( !paymentArg.amount.equals(paymentArg.paid_amount) )
-			
 			
 			
 			int updatedRows = commonMapper.endMembershipUpgradePayment(paymentArg);
@@ -141,8 +146,10 @@ public class HospitalPaymentController {
 			}
 			
 			// 병원의 Membership 변경 작업 시작한다.
-			commonMapper.updateMembershipType(hospitalId, "2");
-			
+			updatedRows = commonMapper.updateMembershipType(hospitalId, Hospital.MEMBERSHIP_ANNUAL);
+			if ( updatedRows != 1 ) {
+				throw new Exception("멤버쉽 변경 생성 실패. 1행이 아님 [" + updatedRows + "]");
+			}
 			
 			
 			res.setResponse(paymentArg);
