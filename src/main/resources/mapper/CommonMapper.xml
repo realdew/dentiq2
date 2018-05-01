@@ -784,7 +784,7 @@
         select * from HOSPITAL where USER_ID=#{userId}
     </select>
     <select id="getHospitalBasicInfoByUserId" resultMap="mapHospital"> <!-- 주의 : 사용자가 n명인 경우, 여기서의 email은 사용자의 email이 아니고 병원의 대표 email임 -->
-        select HOSPITAL_ID, HOSPITAL_EMAIL, HOSPITAL_NAME, LOGO_IMAGE_YN from HOSPITAL where USER_ID=#{userId}
+        select H.HOSPITAL_ID, H.HOSPITAL_EMAIL, H.HOSPITAL_NAME, H.LOGO_IMAGE_YN, U.USER_EMAIL from HOSPITAL H, USER U where H.USER_ID=#{userId} and U.USER_ID=H.USER_ID
     </select>
 	
 	
