@@ -1,6 +1,7 @@
 package dentiq2.api.mapper;
 
 import java.util.List;
+import java.util.Map;
 
 import org.apache.ibatis.annotations.Delete;
 import org.apache.ibatis.annotations.Insert;
@@ -16,6 +17,7 @@ import dentiq2.api.model.JobAttrGroup;
 import dentiq2.api.model.JobSeekerUser;
 import dentiq2.api.model.Location;
 import dentiq2.api.model.LocationSummary;
+import dentiq2.api.model.PaymentArgument;
 import dentiq2.api.model.Resume;
 import dentiq2.api.model.User;
 
@@ -35,6 +37,17 @@ public interface CommonMapper {
 	@Select("select * from LOCATION_CODE")
 	public List<Location> listLocationCode() throws Exception;
 	
+	
+	/* 회원 업그레이드 결제 시작 */
+	public int startMembershipUpgradePayment(PaymentArgument paymentArgument) throws Exception;
+	
+	public int endMembershipUpgradePayment(PaymentArgument paymentArgument) throws Exception;
+	
+	@Select("select HOSPITAL_ID, HOSPITAL_EMAIL, BIZ_REG_NAME, MEMBERSHIP_TYPE from HOSPITAL where HOSPITAL_ID=#{hospitalId} and USE_YN='Y'")
+	public Map<String, String> getBuyerInfo(Long hospitalId) throws Exception;
+	
+	@Update("update HOSPITAL set MEMBERSHIP_TYPE=#{membershipType}, MEMBERSHIP_UPDATE_YYYYMMDD=date_format(now(), '%Y%m%d') where HOSPITAL_ID=#{hospitalId}")
+	public int updateMembershipType(@Param("hospitalId") Long hospitalId, @Param("membershipType") String membershipType) throws Exception;
 	
 	
 	

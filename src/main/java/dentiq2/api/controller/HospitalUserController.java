@@ -53,7 +53,7 @@ import dentiq2.api.model.User;
 @RequestMapping("/api")
 @CrossOrigin(origins="*")
 public class HospitalUserController {
-	
+		
 	/*	
 	 * 기본 :
 	 *			* 완료 ==> 병원 등록/수정  (삭제는 없음)
