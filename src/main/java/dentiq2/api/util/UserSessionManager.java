@@ -16,19 +16,11 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import dentiq2.api.model.User;
 
 
-//class BCrypt {
-//	static String hashpw(String pass, String salt) {
-//		return "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa";
-//	}
-//	
-//}
-
-
 public class UserSessionManager {
 	
 	
 	
-	private static final long SESSION_TIME_OUT = (long)( 10 * 1000 * 60 );		// 1분
+	private static final long TOKEN_TIMEOUT = (long)( 10 * 1000 * 60 );		// 1분
 	
 	private static final String SALT =   "$2a$12$WApznUOJfkEGSmYRfnkrPO";
 	
@@ -48,6 +40,7 @@ public class UserSessionManager {
 		userSession.setKeepingLoginType(user.getKeepingLoginType());
 		
 		
+		//issueTokenWithSession(res, userSession, keepingLoginType);
 		issueTokenWithSession(res, userSession, keepingLoginType);
 	}
 	
@@ -61,7 +54,7 @@ public class UserSessionManager {
 		}
 		
 		Long issuedTimeAt = System.currentTimeMillis();
-		Long expireTimeAt = issuedTimeAt + SESSION_TIME_OUT;
+		Long expireTimeAt = issuedTimeAt + TOKEN_TIMEOUT;
 		
 		session.setIssuedTimeAt(issuedTimeAt);
 		session.setExpireTimeAt(expireTimeAt);
@@ -154,22 +147,14 @@ public class UserSessionManager {
 		
 		
 		Long currentTime = System.currentTimeMillis();
-		//System.out.println("시간 비교 : " + currentTime + "  " + session.getExpireTimeAt());
-//		if ( session.getExpireTimeAt().compareTo(currentTime) < 0 ) {
-//			
-//			if ( session.getKeepingLoginType()!=null && session.getKeepingLoginType().equals(User.KEEPING_LOGIN_PERM) ) {	// 세션 계속 유지가 default이면...
-//				// 새로 세션 발급한다.
-//				System.out.println("세션 새로 발급");
-//				issueTokenWithSession(res, session, null);	// 기존 keepingLoginType 그대로 유지
-//				
-//			} else {			
-//				throw new Exception("세션이 만료되었습니다.");
-//			}
-//			
-//		}
+
 		if ( session.getExpireTimeAt().compareTo(currentTime) < 0 ) {
 			System.out.println("verifyToken() : 세션 새로 발급");
-			issueTokenWithSession(res, session, null);	// 기존 keepingLoginType 그대로 유지
+//			if ( !session.getKeepingLoginType().equals(User.KEEPING_LOGIN_PERM) ) {
+//				throw new Exception("세션이 만료되었습니다.");
+//			} else {
+				issueTokenWithSession(res, session, null);	// 기존 keepingLoginType 그대로 유지
+//			}
 		}
 		
 		return session;

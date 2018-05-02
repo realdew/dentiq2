@@ -100,7 +100,7 @@ public class Hospital {
 	
 	
 	
-	@Getter @Setter private Long interestedByUserId;	// 특정 USER_ID가 관심병원으로 지정한지 여부 (jobad.html에서 관심병원인 것을 표시해주기 위하여 사용함). @see /jobAd/{jobAdId}/detail/
+	//@Getter @Setter private Long interestedByUserId;	// 특정 USER_ID가 관심병원으로 지정한지 여부 (jobad.html에서 관심병원인 것을 표시해주기 위하여 사용함). @see /jobAd/{jobAdId}/detail/
 	
 	/** 민감 정보 필터링 */
 	public void filter() {
