@@ -37,6 +37,13 @@ import dentiq2.api.util.UserSession;
 public class HospitalPaymentController {
 	
 	
+	public static final Long JOB_AD_UPGRADE_FEE_FOR_ANNUAL_MEMBERSHIP = new Long(4900);	// 연간회원 공고 업그레이드 요금
+	public static final Long JOB_AD_UPGRADE_FEE_FOR_NORMAL_MEMBERSHIP = new Long(9900);	// 일반회원 공고 업그레이드 요금
+	
+	public static final Long ANNUAL_MEMBERSHIP_FEE = new Long(99000);					// 연간회원 요금
+	
+	
+	
 	@RequestMapping(value="/hospital/{hospitalId}/upgradeJobAd/{jobAdId}/", method=RequestMethod.POST)
 	public ResponseEntity<JsonResponse<Map<String, Object>>> upgradeJobAd(
 							@PathVariable("hospitalId")							Long hospitalId,
@@ -60,9 +67,9 @@ public class HospitalPaymentController {
 			// 금액계산해서 입력된 금액하고 맞는지 확인한다.
 			Long amountCalculated;
 			if ( hospital.isAnnualMembership() ) {	// 연간회원 : 일 4900원
-				amountCalculated = (long)4900 * (long)period;
+				amountCalculated = JOB_AD_UPGRADE_FEE_FOR_ANNUAL_MEMBERSHIP * (long)period;
 			} else {								// 일반회원 : 일 9900원
-				amountCalculated = (long)9900 * (long)period;
+				amountCalculated = JOB_AD_UPGRADE_FEE_FOR_NORMAL_MEMBERSHIP * (long)period;
 			}
 			if ( !amountCalculated.equals(amount) )
 				throw new Exception("요청된 금액(" + amount + ")과 계산된 금액(" + amountCalculated + ") 불일치. (기간:" + period + ", 유형:" + hospital.isAnnualMembership());
@@ -100,7 +107,7 @@ public class HospitalPaymentController {
 	public static final String ANNUAL_MEMBERSHIP_UPGRADE_EXTEND	= "E";
 	public static final String ANNUAL_MEMBERSHIP_UPGRADE_NEW	= "N";
 	
-	public static final Long ANNUAL_MEMBERSHIP_AMOUNT = new Long(99000);
+	
 	
 	@RequestMapping(value="/hospital/{hospitalId}/upgradeMembership/", method=RequestMethod.POST)
 	public ResponseEntity<JsonResponse<Map<String, Object>>> upgradeMembership( 
@@ -139,7 +146,7 @@ public class HospitalPaymentController {
 			} else throw new Exception("연간회원 업그레이드 유형이 없음 [" + upgradeType + "]");
 			
 			
-			if ( !ANNUAL_MEMBERSHIP_AMOUNT.equals(amount) )
+			if ( !ANNUAL_MEMBERSHIP_FEE.equals(amount) )
 				throw new Exception("연간회원 업그레이드 비용이 올바르지 않음 [" + amount + "]");
 			
 			int updatedRows = commonMapper.updateAnnualMembership(hospitalId, startDate, endDate);
