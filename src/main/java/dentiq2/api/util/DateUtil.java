@@ -6,6 +6,19 @@ import java.util.Date;
 
 public class DateUtil {
 	
+	public static String addDate(String yyyymmdd, int year, int mon, int date) throws Exception {
+		SimpleDateFormat fmt = new SimpleDateFormat("yyyyMMdd");
+		Date d = fmt.parse(yyyymmdd.trim());
+		Calendar cal = Calendar.getInstance();
+		cal.setTime(d);
+		
+		cal.add(Calendar.YEAR, year);
+		cal.add(Calendar.MONTH, mon);
+		cal.add(Calendar.DATE, date);
+		
+		return fmt.format(cal.getTime());
+	}
+	
 	public static String getDayOfDate(String yyyymmdd) throws Exception {
 		if ( yyyymmdd == null || yyyymmdd.trim().length() != 8 ) {
 			throw new Exception("년월일 형식에 맞지 않음 [" + yyyymmdd + "]");

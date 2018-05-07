@@ -6,7 +6,6 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonInclude.Include;
 
-
 import dentiq2.api.util.JsonUtil;
 import lombok.Getter;
 import lombok.Setter;
@@ -22,6 +21,7 @@ public class Hospital {
 	public static final String MEMBERSHIP_NORMAL = "1";		// 일반회원
 	public static final String MEMBERSHIP_ANNUAL = "2";		// 연간회원
 	
+	
 	@Getter @Setter private Location location;
 	
 		
@@ -29,7 +29,14 @@ public class Hospital {
 	@Getter @Setter private String bizRegNo;					// 사업자등록번호	
 	@Getter @Setter private String bizRegName;					// 사업자등록상 사업장명
 	@Getter @Setter private String yKiho;						// 암호화 요양기관코드	Y_KIHO
-	@Getter @Setter private String membershipType;				// 회원유형(1:무료회원, 2:연간회원)	
+	@Getter @Setter private String membershipType;				// 회원유형(1:무료회원, 2:연간회원)
+	public boolean isAnnualMembership() {
+		if ( MEMBERSHIP_ANNUAL.equals(membershipType) ) return true;
+		else return false;
+	}
+	
+	@Getter @Setter private String annualMembershipStartYyyymmdd;
+	@Getter @Setter private String annualMembershipEndYyyymmdd;
 
 	@Getter @Setter private Long userId;						// 사용자 ID			USER_ID
 	@Getter @Setter private String userEmail;

@@ -44,11 +44,44 @@ public interface CommonMapper {
 	
 	public int endMembershipUpgradePayment(PaymentArgument paymentArgument) throws Exception;
 	
-	@Select("select HOSPITAL_ID, HOSPITAL_EMAIL, BIZ_REG_NAME, MEMBERSHIP_TYPE from HOSPITAL where HOSPITAL_ID=#{hospitalId} and USE_YN='Y'")
+	@Select("select HOSPITAL_ID, HOSPITAL_EMAIL, BIZ_REG_NAME, MEMBERSHIP_UPDATE_TS, ANNUAL_MEMBERSHIP_START_YYYYMMDD, ANNUAL_MEMBERSHIP_END_YYYYMMDD from HOSPITAL where HOSPITAL_ID=#{hospitalId} and USE_YN='Y'")
 	public Map<String, String> getBuyerInfo(Long hospitalId) throws Exception;
 	
-	@Update("update HOSPITAL set MEMBERSHIP_TYPE=#{membershipType}, MEMBERSHIP_UPDATE_YYYYMMDD=date_format(now(), '%Y%m%d') where HOSPITAL_ID=#{hospitalId}")
-	public int updateMembershipType(@Param("hospitalId") Long hospitalId, @Param("membershipType") String membershipType) throws Exception;
+	/*
+	update HOSPITAL set
+		ANNUAL_MEMBERSHIP_START_YYYYMMDD=date_format( date_add(curdate(), interval 1 year), '%Y%m%d'),
+		ANNUAL_MEMBERSHIP_END_YYYYMMDD=date_format(curdate(), '%Y%m%d'),
+		MEMBERSHIP_UPDATE_TS=current_timestamp()
+	where HOSPITAL_ID=	
+	 */
+	@Update(	"update HOSPITAL set"
+			+		" MEMBERSHIP_TYPE='2', "
+			+ 		" ANNUAL_MEMBERSHIP_START_YYYYMMDD=#{annualMembershipStartYyyymmdd}, "
+			+ 		" ANNUAL_MEMBERSHIP_END_YYYYMMDD=#{annualMembershipEndYyyymmdd}, "
+			+ 		" MEMBERSHIP_UPDATE_TS=current_timestamp() "
+			+	" where HOSPITAL_ID=#{hospitalId}"
+			)
+	public int updateAnnualMembership(@Param("hospitalId") Long hospitalId,
+									@Param("annualMembershipStartYyyymmdd") String annualMembershipStartYyyymmdd,
+									@Param("annualMembershipEndYyyymmdd") String annualMembershipEndYyyymmdd
+			) throws Exception;
+	
+	
+	
+	
+	/* 공고 업그레이드 */
+	
+	@Update(	"update JOB_AD set "
+			+		" AD_TYPE='2', "
+			+		" PRIMIER_START_YYYYMMDD=#{primierStartYyyymmdd}, "
+			+		" PRIMIER_END_YYYYMMDD=#{primierEndYyyymmdd}, "
+			+		" PRIMIER_UPDATE_TS=current_timestamp() "
+			)
+	public int updateJobAdGrade(@Param("jobAdId") Long jobAdId, 
+								@Param("primierStartYyyymmdd") String primierStartYyyymmdd,
+								@Param("primierEndYyyymmdd") String primierEndYyyymmdd
+			) throws Exception;
+	
 	
 	
 	

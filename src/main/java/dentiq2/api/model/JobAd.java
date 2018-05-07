@@ -26,6 +26,11 @@ public class JobAd {
 	public static final String AD_TYPE_PREMIERE = "2";	// 프리미어 공고 : 2
 	
 	
+	public static final String HIRING_TERM_TYPE_ALWAYS		= "1";		// 상시채용
+	public static final String HIRING_TERM_TYPE_PERIODICAL	= "2";		// 기간채용
+	
+	
+	
 	
 	@Getter @Setter private Hospital hospital;
 	
@@ -35,10 +40,39 @@ public class JobAd {
 	@Getter @Setter private Long	jobAdId;
 	@Getter @Setter private String	adStatus;					// 공고상태 (공고상태(A:활성, E:마감) 마감은 접수종료일 전 수동 마감인 경우)
 	
+	
+	
 	@Getter @Setter private String	adType;						// 공고 유형(1:일반, 2:프리미어)	
 		// WEB의 편의성 지원 메소드 (ex. Handlebars.js 등에서는 값을 사용한 if문이 지원되지 않음(true/false만 가능))
 		public boolean isAdTypeNormal()		{	if ( this.adType != null && this.adType.equals(AD_TYPE_NORMAL) ) return true; else return false;	}
 		public boolean isAdTypePremiere()	{	if ( this.adType != null && this.adType.equals(AD_TYPE_PREMIERE) ) return true; else return false;	}
+	
+	
+	@Getter @Setter private String primierStartYyyymmdd;
+//	public void setPrimierStartYyyymmdd(String yyyymmdd) {
+//		this.primierStartYyyymmdd = yyyymmdd;
+//		prepareAdType();
+//	}
+	@Getter @Setter private String primierEndYyyymmdd;
+//	public void setPrimierEndYyyymmdd(String yyyymmdd) {
+//		this.primierEndYyyymmdd = yyyymmdd;
+//		prepareAdType();
+//	}
+//	private void prepareAdType() {
+//		if ( this.primierStartYyyymmdd != null && !this.primierStartYyyymmdd.trim().equals("")
+//				&& this.primierEndYyyymmdd != null && !this.primierEndYyyymmdd.trim().equals("") ) {
+//			int start = Integer.parseInt(this.primierStartYyyymmdd);
+//			int end   = Integer.parseInt(this.primierEndYyyymmdd);
+//			int now   = Integer.parseInt(DateUtil.todayYYYYMMDD());
+//			
+//			if ( start <= now && now <= end ) {
+//				this.adType = AD_TYPE_PREMIERE;
+//				return;
+//			}
+//		}
+//		this.adType = AD_TYPE_NORMAL;
+//	}
+	
 	
 	@Getter @Setter private Long	hospitalId;
 	
