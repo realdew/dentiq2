@@ -18,6 +18,7 @@ import dentiq2.api.model.JobSeekerUser;
 import dentiq2.api.model.Location;
 import dentiq2.api.model.LocationSummary;
 import dentiq2.api.model.PaymentArgument;
+import dentiq2.api.model.PaymentData;
 import dentiq2.api.model.Resume;
 import dentiq2.api.model.User;
 
@@ -39,7 +40,7 @@ public interface CommonMapper {
 	
 	
 	/* 회원 업그레이드 결제 시작 */
-	public int startMembershipUpgradePayment(PaymentArgument paymentArgument) throws Exception;
+	public int startMembershipUpgradePayment(PaymentData paymentData) throws Exception;
 	
 	public int endMembershipUpgradePayment(PaymentArgument paymentArgument) throws Exception;
 	

@@ -1,5 +1,6 @@
 package dentiq2.api.controller;
 
+import java.math.BigDecimal;
 import java.util.Map;
 
 import javax.servlet.http.HttpServletRequest;
@@ -22,6 +23,7 @@ import dentiq2.api.LogicalException;
 import dentiq2.api.mapper.CommonMapper;
 import dentiq2.api.model.Hospital;
 import dentiq2.api.model.PaymentArgument;
+import dentiq2.api.model.PaymentData;
 import dentiq2.api.util.UserSession;
 
 
@@ -66,11 +68,11 @@ public class HospitalPaymentController {
 	
 	
 	@RequestMapping(value="/hospital/{hospitalId}/startPaymentForMembership/", method=RequestMethod.POST)
-	public ResponseEntity<JsonResponse<PaymentArgument>> startPaymentForMembershipUpgrade(
+	public ResponseEntity<JsonResponse<PaymentData>> startPaymentForMembershipUpgrade(
 						@PathVariable("hospitalId")							Long hospitalId,
 						HttpServletRequest httpRequest,
 						HttpServletResponse httpResponse) {
-		JsonResponse<PaymentArgument> res = new JsonResponse<PaymentArgument>();
+		JsonResponse<PaymentData> res = new JsonResponse<PaymentData>();
 		try {
 			UserSession session = getHospitalUserSession(httpRequest, httpResponse);
 			if ( !session.getHospitalId().equals(hospitalId) )	throw new LogicalException(ErrorCode.AUTH_002);
@@ -81,10 +83,10 @@ public class HospitalPaymentController {
 			Map<String, String> buyerInfo = commonMapper.getBuyerInfo(hospitalId);
 			if ( buyerInfo == null ) throw new Exception("병원 정보가 없습니다. [" + hospitalId + "]");
 			
-			String buyer_email = buyerInfo.get("HOSPITAL_EMAIL");
-			String buyer_name  = buyerInfo.get("BIZ_REG_NAME");
-			if ( buyer_email==null || buyer_email.trim().equals("") || buyer_name==null || buyer_name.trim().equals("") ) {
-				throw new Exception("병원 정보에 누락이 있습니다. [" + buyer_email + "] [" + buyer_name + "]");
+			String buyerEmail = buyerInfo.get("HOSPITAL_EMAIL");
+			String buyerName  = buyerInfo.get("BIZ_REG_NAME");
+			if ( buyerEmail==null || buyerEmail.trim().equals("") || buyerName==null || buyerName.trim().equals("") ) {
+				throw new Exception("병원 정보에 누락이 있습니다. [" + buyerEmail + "] [" + buyerName + "]");
 			}
 			if ( buyerInfo.get("MEMBERSHIP_TYPE").equals(Hospital.MEMBERSHIP_ANNUAL) ) {
 				throw new Exception("이미 연간회원입니다.");
@@ -92,36 +94,37 @@ public class HospitalPaymentController {
 			
 			
 			
-			String merchant_uid	= generateMerchantUid(hospitalId, channelId, API_SERVER_ID);
-			Long amount		= (long) 104;
+			
+			
+			String merchantUid	= generateMerchantUid(hospitalId, channelId, API_SERVER_ID);
+			BigDecimal amount	= new BigDecimal(10);
 			String name			= "멤버쉽업그레이드:결제테스트";
 			
 			
-			PaymentArgument paymentArg = new PaymentArgument();
+			PaymentData data = new PaymentData();
+			data.setPayMethod("card");
+			data.setMerchantUid(merchantUid);
+			data.setName(name);
+			data.setAmount(amount);
+			data.setBuyerEmail(buyerEmail);
+			data.setBuyerName(buyerName);
 			
-			paymentArg.setMerchant_uid(merchant_uid);
-			paymentArg.setName(name);
-			paymentArg.setAmount(amount);
-			paymentArg.setBuyer_email(buyer_email);
-			paymentArg.setBuyer_name(buyer_name);
-			
-			
-			paymentArg.setHospitalId(hospitalId);
-			paymentArg.setPaymentType("AM");		// Annual Membership
+			data.setHospitalId(hospitalId);
+			data.setPaymentFor("AM");			// Annual Membership
 			
 			
 			// DB에 저장
-			int updatedRows = commonMapper.startMembershipUpgradePayment(paymentArg);
+			int updatedRows = commonMapper.startMembershipUpgradePayment(data);
 			if ( updatedRows != 1 ) {
 				throw new Exception("결제 데이터 생성 실패. 1행이 아님 [" + updatedRows + "]");
 			}
 			
 			
-			res.setResponse(paymentArg);
+			res.setResponse(data);
 		} catch(Exception ex) {
 			res.setException(ex);
 		}
-		return new ResponseEntity<JsonResponse<PaymentArgument>>(res, HttpStatus.OK);
+		return new ResponseEntity<JsonResponse<PaymentData>>(res, HttpStatus.OK);
 	}
 	
 	@RequestMapping(value="/hospital/{hospitalId}/endPaymentForMembership/", method=RequestMethod.POST)

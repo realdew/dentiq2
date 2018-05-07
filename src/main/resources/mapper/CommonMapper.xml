@@ -1081,19 +1081,19 @@
 	/*********************************************************************************************************************** -->
 	
 	<insert id="startMembershipUpgradePayment">
-		insert PAYMENT(MERCHANT_UID, HOSPITAL_ID, PAYMENT_TYPE, PG, PAY_METHOD, NAME, AMOUNT) 
-		values (#{merchant_uid}, #{hospitalId}, #{paymentType}, #{pg}, #{pay_method}, #{name}, #{amount})
+		insert PAYMENT(MERCHANT_UID, HOSPITAL_ID, PAYMENT_FOR, PG, PAY_METHOD, NAME, AMOUNT) 
+		values (#{merchantUid}, #{hospitalId}, #{paymentFor}, #{pg}, #{payMethod}, #{name}, #{amount})
 	</insert>
 	
 	<update id="endMembershipUpgradePayment">
 		update PAYMENT set 
 			TRX_STATUS=#{trxStatus}, TRX_END_TS=CURRENT_TIMESTAMP,
-			PAID_AMOUNT=#{paid_amount},
+			PAID_AMOUNT=#{paidAmount},
 			RES_JSON=#{resJson},
-			ERROR_MSG=#{error_msg}, APPLY_NUM=#{apply_num},
-			IMP_UID=#{imp_uid}, PG_TID=#{pg_tid}
+			ERROR_MSG=#{failReason}, APPLY_NUM=#{applyNum},
+			IMP_UID=#{impUid}, PG_TID=#{pgTid}
 		where
-			MERCHANT_UID=#{merchant_uid} and HOSPITAL_ID=#{hospitalId}
+			MERCHANT_UID=#{merchantUid} and HOSPITAL_ID=#{hospitalId}
 	</update>
 	
 	
