@@ -131,6 +131,75 @@ public class JobSeekerUserController {
 	}
 	
 	
+	@RequestMapping(value="/user/{userId}/setting/", method=RequestMethod.GET)
+	public ResponseEntity<JsonResponse<Map<String, String>>> getUserSettingsByUserId(
+							@PathVariable("userId")		Long userId,
+							HttpServletRequest httpRequest,
+							HttpServletResponse httpResponse
+			) {
+
+		JsonResponse<Map<String, String>> res = new JsonResponse<Map<String, String>>();
+		try {
+			// JOB_SEEKER_USER, HOSPITAL_USER 공통이므로, 기본적인 세션 체크만 한다.
+			dentiq2.api.util.UserSessionManager sesMan = dentiq2.api.util.UserSessionManager.create();			
+			UserSession session = null;
+			try {
+				session = sesMan.verifyToken(httpRequest, httpResponse);
+			} catch(Exception ex) {
+				throw ex;
+			}
+			if ( session==null ) throw new LogicalException(ErrorCode.AUTH_901);	// 로그인되어 있지 않습니다.			
+			if ( !session.getUserId().equals(userId) ) throw new LogicalException(ErrorCode.AUTH_102);
+			
+			
+			
+			Map<String, String> settings = commonMapper.getUserSettings(userId);			
+			res.setResponse(settings);
+		} catch(Exception ex) {
+		res.setException(ex);
+		}
+		
+		return new ResponseEntity<JsonResponse<Map<String, String>>>(res, HttpStatus.OK);	
+	}
+	@RequestMapping(value="/user/{userId}/setting/", method=RequestMethod.POST)
+	public ResponseEntity<JsonResponse<Map<String, String>>> updateUserSettingsByUserId(
+							@PathVariable("userId")		Long userId,
+							@RequestParam(value="agreementNoticeNewsYn",	required=true)	String agreementNoticeNewsYn,
+							@RequestParam(value="agreementHiringNewsYn",	required=true)	String agreementHiringNewsYn,
+							@RequestParam(value="agreementEventYn",			required=true)	String agreementEventYn,
+							@RequestParam(value="agreementAdYn",			required=true)	String agreementAdYn,
+							HttpServletRequest httpRequest,
+							HttpServletResponse httpResponse
+			) {
+
+		JsonResponse<Map<String, String>> res = new JsonResponse<Map<String, String>>();
+		try {
+			// JOB_SEEKER_USER, HOSPITAL_USER 공통이므로, 기본적인 세션 체크만 한다.
+			dentiq2.api.util.UserSessionManager sesMan = dentiq2.api.util.UserSessionManager.create();			
+			UserSession session = null;
+			try {
+				session = sesMan.verifyToken(httpRequest, httpResponse);
+			} catch(Exception ex) {
+				throw ex;
+			}
+			if ( session==null ) throw new LogicalException(ErrorCode.AUTH_901);	// 로그인되어 있지 않습니다.			
+			if ( !session.getUserId().equals(userId) ) throw new LogicalException(ErrorCode.AUTH_102);
+			
+			int updatedRows = commonMapper.updateUserSettings(userId, agreementNoticeNewsYn, agreementHiringNewsYn, agreementEventYn, agreementAdYn);
+			if ( updatedRows != 1 ) throw new Exception("변경된 행이 1행이 아님 [" + updatedRows + "]");
+			
+			
+			
+			Map<String, String> settings = commonMapper.getUserSettings(userId);			
+			res.setResponse(settings);
+		} catch(Exception ex) {
+		res.setException(ex);
+		}
+		
+		return new ResponseEntity<JsonResponse<Map<String, String>>>(res, HttpStatus.OK);	
+	}
+	
+	
 	/**************************************************************************************************************************/
 	/*                                                                                                                        */
 	/*                                                    이력서                                                              */

@@ -1,6 +1,7 @@
 package dentiq2.api.mapper;
 
 import java.util.List;
+import java.util.Map;
 
 import org.apache.ibatis.annotations.Delete;
 import org.apache.ibatis.annotations.Insert;
@@ -325,6 +326,17 @@ public interface CommonMapper {
 	public int updateProfileImageYn(@Param("userId") Long userId, @Param("flag") String flag) throws Exception;
 	
 	
+	// user_setting.html용
+	@Select("select AGREEMENT_NOTICE_NEWS_YN, AGREEMENT_HIRING_NEWS_YN, AGREEMENT_EVENT_YN, AGREEMENT_AD_YN from USER where USER_ID=#{userId}")
+	public Map<String, String> getUserSettings(@Param("userId") Long userId) throws Exception;	
+	
+	@Update("update USER set "
+			+		"AGREEMENT_NOTICE_NEWS_YN=#{agreementNoticeNewsYn}, AGREEMENT_HIRING_NEWS_YN=#{agreementHiringNewsYn}, "
+			+		"AGREEMENT_EVENT_YN=#{agreementEventYn}, AGREEMENT_AD_YN=#{agreementAdYn} "
+			+"where USER_ID=#{userId}")
+	public int updateUserSettings(@Param("userId") Long userId,
+				@Param("agreementNoticeNewsYn") String agreementNoticeNewsYn, @Param("agreementHiringNewsYn") String agreementHiringNewsYn, 
+				@Param("agreementEventYn") String agreementEventYn, @Param("agreementAdYn") String agreementAdYn) throws Exception;
 	
 	
 	/**************************************************************************************************************************/
