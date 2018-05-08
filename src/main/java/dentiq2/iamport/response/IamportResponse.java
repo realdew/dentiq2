@@ -14,6 +14,6 @@ public class IamportResponse<T> {
 	
 	@Getter @Setter T response;
 	
-	@Getter @Setter String json;
+	//@Getter @Setter String json;
 
 }

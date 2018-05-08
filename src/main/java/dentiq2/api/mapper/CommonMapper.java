@@ -21,6 +21,7 @@ import dentiq2.api.model.PaymentArgument;
 import dentiq2.api.model.PaymentData;
 import dentiq2.api.model.Resume;
 import dentiq2.api.model.User;
+import dentiq2.iamport.response.Payment;
 
 /**
  * 
@@ -39,44 +40,61 @@ public interface CommonMapper {
 	public List<Location> listLocationCode() throws Exception;
 	
 	
-	/* 회원 업그레이드 결제 시작 */
-	public int startMembershipUpgradePayment(PaymentData paymentData) throws Exception;
-	
-	public int endMembershipUpgradePayment(PaymentArgument paymentArgument) throws Exception;
-	
-	@Select("select HOSPITAL_ID, HOSPITAL_EMAIL, BIZ_REG_NAME, MEMBERSHIP_UPDATE_TS, ANNUAL_MEMBERSHIP_START_YYYYMMDD, ANNUAL_MEMBERSHIP_END_YYYYMMDD from HOSPITAL where HOSPITAL_ID=#{hospitalId} and USE_YN='Y'")
-	public Map<String, String> getBuyerInfo(Long hospitalId) throws Exception;
-	
-	/*
-	update HOSPITAL set
-		ANNUAL_MEMBERSHIP_START_YYYYMMDD=date_format( date_add(curdate(), interval 1 year), '%Y%m%d'),
-		ANNUAL_MEMBERSHIP_END_YYYYMMDD=date_format(curdate(), '%Y%m%d'),
-		MEMBERSHIP_UPDATE_TS=current_timestamp()
-	where HOSPITAL_ID=	
-	 */
-	@Update(	"update HOSPITAL set"
-			+		" MEMBERSHIP_TYPE='2', "
-			+ 		" ANNUAL_MEMBERSHIP_START_YYYYMMDD=#{annualMembershipStartYyyymmdd}, "
-			+ 		" ANNUAL_MEMBERSHIP_END_YYYYMMDD=#{annualMembershipEndYyyymmdd}, "
-			+ 		" MEMBERSHIP_UPDATE_TS=current_timestamp() "
-			+	" where HOSPITAL_ID=#{hospitalId}"
-			)
-	public int updateAnnualMembership(@Param("hospitalId") Long hospitalId,
-									@Param("annualMembershipStartYyyymmdd") String annualMembershipStartYyyymmdd,
-									@Param("annualMembershipEndYyyymmdd") String annualMembershipEndYyyymmdd
-			) throws Exception;
-	
+//	/* 회원 업그레이드 결제 시작 */
+//	public int startMembershipUpgradePayment(PaymentData paymentData) throws Exception;
+//	
+//	public int endMembershipUpgradePayment(PaymentArgument paymentArgument) throws Exception;
+//	
+//	@Select("select HOSPITAL_ID, HOSPITAL_EMAIL, BIZ_REG_NAME, MEMBERSHIP_UPDATE_TS, ANNUAL_MEMBERSHIP_START_YYYYMMDD, ANNUAL_MEMBERSHIP_END_YYYYMMDD from HOSPITAL where HOSPITAL_ID=#{hospitalId} and USE_YN='Y'")
+//	public Map<String, String> getBuyerInfo(Long hospitalId) throws Exception;
+//	
+//	/*
+//	update HOSPITAL set
+//		ANNUAL_MEMBERSHIP_START_YYYYMMDD=date_format( date_add(curdate(), interval 1 year), '%Y%m%d'),
+//		ANNUAL_MEMBERSHIP_END_YYYYMMDD=date_format(curdate(), '%Y%m%d'),
+//		MEMBERSHIP_UPDATE_TS=current_timestamp()
+//	where HOSPITAL_ID=	
+//	 */
+//	@Update(	"update HOSPITAL set"
+//			+		" MEMBERSHIP_TYPE='2', "
+//			+ 		" ANNUAL_MEMBERSHIP_START_YYYYMMDD=#{annualMembershipStartYyyymmdd}, "
+//			+ 		" ANNUAL_MEMBERSHIP_END_YYYYMMDD=#{annualMembershipEndYyyymmdd}, "
+//			+ 		" MEMBERSHIP_UPDATE_TS=current_timestamp() "
+//			+	" where HOSPITAL_ID=#{hospitalId}"
+//			)
+//	public int updateAnnualMembership(@Param("hospitalId") Long hospitalId,
+//									@Param("annualMembershipStartYyyymmdd") String annualMembershipStartYyyymmdd,
+//									@Param("annualMembershipEndYyyymmdd") String annualMembershipEndYyyymmdd
+//			) throws Exception;
+//	
 	
 	
 	
 	/* 공고 업그레이드 */
 	
+	@Insert("insert PAYMENT(MERCHANT_UID, HOSPITAL_ID, JOB_AD_ID, PAYMENT_FOR, PG, PAY_METHOD, NAME, AMOUNT, CUSTOM_DATA, START_DATE, END_DATE, PERIOD) " + 
+			"		values (#{merchantUid}, #{hospitalId}, #{jobAdId}, #{paymentFor}, #{pg}, #{payMethod}, #{name}, #{amount}, #{customData}, #{startDate}, #{endDate}, #{period})")
+	public int startJobAdUpgradePayment(PaymentData paymentData) throws Exception;
+	
+	@Select("select * from PAYMENT where MERCHANT_UID=#{merchantUid}")
+	public PaymentData getJobUpgradePayment(String merchantUid) throws Exception;	
+	
+	@Update("update PAYMENT set " + 
+			"			STATUS=#{status}, TRX_END_TS=CURRENT_TIMESTAMP, " + 
+			"			RES_JSON=#{resJson}, " + 
+			"			FAIL_REASON=#{failReason}, " + 
+			"			CARD_NAME=#{cardName}, APPLY_NUM=#{applyNum}, " + 
+			"			IMP_UID=#{impUid}, PG_TID=#{pgTid} " + 
+			"		where " + 
+			"			MERCHANT_UID=#{merchantUid} and AMOUNT=#{amount}")
+	public int endJobAdUpgradePayment(Payment payment) throws Exception;
+	
+	
 	@Update(	"update JOB_AD set "
 			+		" AD_TYPE='2', "
 			+		" PRIMIER_START_YYYYMMDD=#{primierStartYyyymmdd}, "
 			+		" PRIMIER_END_YYYYMMDD=#{primierEndYyyymmdd}, "
-			+		" PRIMIER_UPDATE_TS=current_timestamp() "
-			)
+			+		" PRIMIER_UPDATE_TS=current_timestamp() " )
 	public int updateJobAdGrade(@Param("jobAdId") Long jobAdId, 
 								@Param("primierStartYyyymmdd") String primierStartYyyymmdd,
 								@Param("primierEndYyyymmdd") String primierEndYyyymmdd

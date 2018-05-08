@@ -1088,7 +1088,7 @@
 	/*                                                결제 관련                                                               */
 	/*                                                                                                                        */
 	/*********************************************************************************************************************** -->
-	
+	<!--
 	<insert id="startMembershipUpgradePayment">
 		insert PAYMENT(MERCHANT_UID, HOSPITAL_ID, PAYMENT_FOR, PG, PAY_METHOD, NAME, AMOUNT) 
 		values (#{merchantUid}, #{hospitalId}, #{paymentFor}, #{pg}, #{payMethod}, #{name}, #{amount})
@@ -1104,7 +1104,7 @@
 		where
 			MERCHANT_UID=#{merchantUid} and HOSPITAL_ID=#{hospitalId}
 	</update>
-	
+	-->
 	
 	
 </mapper>

@@ -192,7 +192,7 @@ public class IamportClient {
 			ObjectMapper mapper = new ObjectMapper();
 			mapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
 			IamportResponse<Payment> payment =  mapper.readValue(response, new TypeReference<IamportResponse<Payment>>() {});
-			payment.setJson(response);
+			payment.getResponse().setResJson(response);
 			
 			
 			return payment;
@@ -216,7 +216,8 @@ public class IamportClient {
 			ObjectMapper mapper = new ObjectMapper();
 			mapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
 			IamportResponse<Payment> payment =  mapper.readValue(response, new TypeReference<IamportResponse<Payment>>() {});
-			payment.setJson(response);
+			//payment.setJson(response);
+			payment.getResponse().setResJson(response);
 			
 			return payment;
 		}
@@ -241,7 +242,7 @@ public class IamportClient {
 			ObjectMapper mapper = new ObjectMapper();
 			mapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
 			IamportResponse<Payment> payment =  mapper.readValue(response, new TypeReference<IamportResponse<Payment>>() {});
-			payment.setJson(response);
+			payment.getResponse().setResJson(response);
 			
 			return payment;
 		}		

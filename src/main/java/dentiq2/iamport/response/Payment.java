@@ -28,8 +28,8 @@ public class Payment {
 	@JsonProperty(value="pg_tid")
 	@Getter @Setter public String pgTid;
 	
-	@JsonProperty(value="escrow")
-	@Getter @Setter public boolean escrow;
+//	@JsonProperty(value="escrow")
+//	@Getter @Setter public boolean escrow;
 	
 	@JsonProperty(value="apply_num")
 	@Getter @Setter public String applyNum;
@@ -40,17 +40,17 @@ public class Payment {
 	@JsonProperty(value="card_quota")
 	@Getter @Setter public int cardQuota;
 	
-	@JsonProperty(value="vbank_name")
-	@Getter @Setter public String vbankName;
-	
-	@JsonProperty(value="vbank_num")
-	@Getter @Setter public String vbankNum;
-	
-	@JsonProperty(value="vbank_holder")
-	@Getter @Setter public String vbankHolder;
-	
-	@JsonProperty(value="vbank_date")
-	@Getter @Setter public long vbankDate;
+//	@JsonProperty(value="vbank_name")
+//	@Getter @Setter public String vbankName;
+//	
+//	@JsonProperty(value="vbank_num")
+//	@Getter @Setter public String vbankNum;
+//	
+//	@JsonProperty(value="vbank_holder")
+//	@Getter @Setter public String vbankHolder;
+//	
+//	@JsonProperty(value="vbank_date")
+//	@Getter @Setter public long vbankDate;
 	
 	@JsonProperty(value="name")
 	@Getter @Setter public String name;
@@ -70,11 +70,11 @@ public class Payment {
 	@JsonProperty(value="buyer_tel")
 	@Getter @Setter public String buyerTel;
 	
-	@JsonProperty(value="buyer_addr")
-	@Getter @Setter public String buyerAddr;
-	
-	@JsonProperty(value="buyer_postcode")
-	@Getter @Setter public String buyerPostcode;
+//	@JsonProperty(value="buyer_addr")
+//	@Getter @Setter public String buyerAddr;
+//	
+//	@JsonProperty(value="buyer_postcode")
+//	@Getter @Setter public String buyerPostcode;
 	
 	@JsonProperty(value="custom_data")
 	@Getter @Setter public String customData;
@@ -99,6 +99,8 @@ public class Payment {
 	
 	@JsonProperty(value="receipt_url")
 	@Getter @Setter public String receiptUrl;
+	
+	@Getter @Setter public String resJson;
 	
 	
 	
