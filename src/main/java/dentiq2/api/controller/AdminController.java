@@ -1,10 +1,14 @@
 package dentiq2.api.controller;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import javax.annotation.PostConstruct;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.mail.SimpleMailMessage;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.web.bind.annotation.CrossOrigin;
@@ -91,5 +95,33 @@ public class AdminController {
 		String result = "A test email was sent !!! : " + System.currentTimeMillis();
 		return result;
 	}
+	
+	
+	
+	@RequestMapping(value="/updateJobAdType/", method=RequestMethod.GET)
+	public ResponseEntity<JsonResponse<Map<String, Object>>> updateJobAdType() {
+		JsonResponse<Map<String, Object>> res = new JsonResponse<Map<String, Object>>();
+		try {
+		
+			int jobAdTypeUpdated =				commonMapper.updateJobAdTypeBatch();
+			int jobAdStatusUpdated1 =			commonMapper.updateJobAdStatusBatch1();
+			int jobAdStatusUpdated2 =			commonMapper.updateJobAdStatusBatch2();
+			int hospitalMembershipUpdated =		commonMapper.updateHospitalMembershipTypeBatch();
+			
+			Map<String, Object> result = new HashMap<String, Object>();
+			result.put("jobAdTypeUpdated",			jobAdTypeUpdated);
+			result.put("jobAdStatusUpdated1",		jobAdStatusUpdated1);
+			result.put("jobAdStatusUpdated2",		jobAdStatusUpdated2);
+			result.put("hospitalMembershipUpdated",	hospitalMembershipUpdated);
+			
+			res.setResponse(result);
+		} catch(Exception ex) {
+			res.setException(ex);
+		}
+		return new ResponseEntity<JsonResponse<Map<String, Object>>>(res, HttpStatus.OK);
+	}
+	
+	
+	
 
 }

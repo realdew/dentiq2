@@ -1,7 +1,6 @@
 package dentiq2.api.mapper;
 
 import java.util.List;
-import java.util.Map;
 
 import org.apache.ibatis.annotations.Delete;
 import org.apache.ibatis.annotations.Insert;
@@ -17,7 +16,6 @@ import dentiq2.api.model.JobAttrGroup;
 import dentiq2.api.model.JobSeekerUser;
 import dentiq2.api.model.Location;
 import dentiq2.api.model.LocationSummary;
-import dentiq2.api.model.PaymentArgument;
 import dentiq2.api.model.PaymentData;
 import dentiq2.api.model.Resume;
 import dentiq2.api.model.User;
@@ -80,21 +78,22 @@ public interface CommonMapper {
 	public PaymentData getJobUpgradePayment(String merchantUid) throws Exception;	
 	
 	@Update("update PAYMENT set " + 
-			"			STATUS=#{status}, TRX_END_TS=CURRENT_TIMESTAMP, " + 
-			"			RES_JSON=#{resJson}, " + 
-			"			FAIL_REASON=#{failReason}, " + 
-			"			CARD_NAME=#{cardName}, APPLY_NUM=#{applyNum}, " + 
-			"			IMP_UID=#{impUid}, PG_TID=#{pgTid} " + 
-			"		where " + 
-			"			MERCHANT_UID=#{merchantUid} and AMOUNT=#{amount}")
+			"	STATUS=#{status}, TRX_END_TS=CURRENT_TIMESTAMP, " + 
+			"	RES_JSON=#{resJson}, " + 
+			"	FAIL_REASON=#{failReason}, " + 
+			"	CARD_NAME=#{cardName}, APPLY_NUM=#{applyNum}, " + 
+			"	IMP_UID=#{impUid}, PG_TID=#{pgTid} " + 
+			"where " + 
+			"	MERCHANT_UID=#{merchantUid} and AMOUNT=#{amount}")
 	public int endJobAdUpgradePayment(Payment payment) throws Exception;
 	
 	
 	@Update(	"update JOB_AD set "
-			+		" AD_TYPE='2', "
+			+		" AD_TYPE='2', "			// AD_TYPE은 여기서 넣지 않고 Batch가 하는 것이 정상이나, 당일(오늘) 바로 프리미어로 업그레이드하는 것이므로 AD_TYPE을 바로 변경해도 문제되지 않을 듯
 			+		" PRIMIER_START_YYYYMMDD=#{primierStartYyyymmdd}, "
 			+		" PRIMIER_END_YYYYMMDD=#{primierEndYyyymmdd}, "
-			+		" PRIMIER_UPDATE_TS=current_timestamp() " )
+			+		" PRIMIER_UPDATE_TS=current_timestamp() " 
+			+	"where JOB_AD_ID=#{jobAdId}" )
 	public int updateJobAdGrade(@Param("jobAdId") Long jobAdId, 
 								@Param("primierStartYyyymmdd") String primierStartYyyymmdd,
 								@Param("primierEndYyyymmdd") String primierEndYyyymmdd
@@ -103,9 +102,34 @@ public interface CommonMapper {
 	
 	
 	
+	
+	/******** 공고 유형 배치 처리 *******/
+	
+	// 오늘 날짜보다 프리미어 광고 종료일이 이전이었다면, 프리미어 기간이 이미 끝난 것이므로, AD_TYPE을 '1'(일반 공고)로 변경한다.
+	@Update("update JOB_AD set AD_TYPE='1' where AD_TYPE='2' and PRIMIER_END_YYYYMMDD<date_format(curdate(), '%Y%m%d')")
+	public int updateJobAdTypeBatch() throws Exception;
+	
+//	@Update("update JOB_AD set AD_TYPE='2' where PRIMIER_START_YYYYMMDD<=date_format(curdate(), '%Y%m%d') and PRIMIER_END_YYYYMMDD>=date_format(curdate(), '%Y%m%d')")
+//	public int updateJobAdTypeBatch2() throws Exception;
+	
+	// 활성상태(A) 공고 중에서 기간채용이고 공고 종료일이 오늘 날짜보다 이전이라면, 공고 게시 기간이 끝난 것이므로, AD_STATUS를 'E'(기간종료로 마감)으로 변경한다.
+	@Update("update JOB_AD set AD_STATUS='E' where AD_STATUS='A' and HIRING_TERM_TYPE='2' and HIRING_END_DATE<date_format(curdate(), '%Y%m%d')")
+	public int updateJobAdStatusBatch1() throws Exception;
+	
+	// 기간채용공고인데, 아직 공고 시작일이 도래하지 못해서 'P' 상태에 있던 것들을 ===> 오늘 날짜가 공고시작일과 공고종료일에 포함되면 AD_STATUS를 'A'(공고활성)으로 변경한다.
+	@Update("update JOB_AD set AD_STATUS='A where AD_STATUS='P' and HIRING_TERM_TYPE='2' and HIRING_START_DATE<=date_format(curdate(), '%Y%m%d') and HIRING_END_DATE>=date_format(curdate(), '%Y%m%d')")
+	public int updateJobAdStatusBatch2() throws Exception;
+	
+	
+	// 오늘 날짜보다 연간회원 종료일이 이전이었다면, 연간회원 기간이 이미 끝난 것이므로, MEMBERSHIP_TYPE을 '1'(일반 회원)로 변경한다.
+	@Update("update HOSPITAL set MEMBERSHIP_TYPE='1' where MEMBERSHIP_TYPE='2' and ANNUAL_MEMBERSHIP_END_YYYYMMDD<date_format(curdate(), '%Y%m%d')")
+	public int updateHospitalMembershipTypeBatch() throws Exception;
+	
+	
+	
 	/**************************************************************************************************************************/
 	/*                                                                                                                        */
-	/*                                                  공고 정보                                                             */
+	/*                                                  공고 정보                          							          */
 	/*                                                                                                                        */
 	/**************************************************************************************************************************/
 	

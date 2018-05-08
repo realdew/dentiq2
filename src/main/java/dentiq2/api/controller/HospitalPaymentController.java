@@ -48,7 +48,7 @@ public class HospitalPaymentController {
 	
 	// 공고 업그레이드 전 기초 데이터 확인
 	@RequestMapping(value="/hospital/{hospitalId}/checkJobAdUpgradable/{jobAdId}/", method=RequestMethod.GET)
-	public ResponseEntity<JsonResponse<Map<String, Object>>> prepareUpgradeJobAd(
+	public ResponseEntity<JsonResponse<Map<String, Object>>> checkJobAdUpgradable(
 							@PathVariable("hospitalId")							Long hospitalId,
 							@PathVariable("jobAdId")							Long jobAdId,
 							HttpServletRequest httpRequest,
