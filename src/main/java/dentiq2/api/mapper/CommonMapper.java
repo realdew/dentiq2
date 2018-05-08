@@ -327,7 +327,8 @@ public interface CommonMapper {
 	
 	
 	// user_setting.html용
-	@Select("select AGREEMENT_NOTICE_NEWS_YN, AGREEMENT_HIRING_NEWS_YN, AGREEMENT_EVENT_YN, AGREEMENT_AD_YN from USER where USER_ID=#{userId}")
+	@Select("select AGREEMENT_NOTICE_NEWS_YN as agreementNoticeNewsYn, AGREEMENT_HIRING_NEWS_YN as agreementHiringNewsYn, "
+			+ "AGREEMENT_EVENT_YN as agreementEventYn, AGREEMENT_AD_YN as agreementAdYn from USER where USER_ID=#{userId}")
 	public Map<String, String> getUserSettings(@Param("userId") Long userId) throws Exception;	
 	
 	@Update("update USER set "

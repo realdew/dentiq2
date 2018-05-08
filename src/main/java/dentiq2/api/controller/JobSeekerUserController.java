@@ -161,13 +161,51 @@ public class JobSeekerUserController {
 		
 		return new ResponseEntity<JsonResponse<Map<String, String>>>(res, HttpStatus.OK);	
 	}
+//	@RequestMapping(value="/user/{userId}/setting/", method=RequestMethod.POST)
+//	public ResponseEntity<JsonResponse<Map<String, String>>> updateUserSettingByUserId(
+//							@PathVariable("userId")		Long userId,
+//							@RequestParam(value="agreementNoticeNewsYn",	required=false)	String agreementNoticeNewsYn,
+//							@RequestParam(value="agreementHiringNewsYn",	required=false)	String agreementHiringNewsYn,
+//							@RequestParam(value="agreementEventYn",			required=false)	String agreementEventYn,
+//							@RequestParam(value="agreementAdYn",			required=false)	String agreementAdYn,
+//							HttpServletRequest httpRequest,
+//							HttpServletResponse httpResponse
+//			) {
+//
+//		JsonResponse<Map<String, String>> res = new JsonResponse<Map<String, String>>();
+//		try {
+//			// JOB_SEEKER_USER, HOSPITAL_USER 공통이므로, 기본적인 세션 체크만 한다.
+//			dentiq2.api.util.UserSessionManager sesMan = dentiq2.api.util.UserSessionManager.create();			
+//			UserSession session = null;
+//			try {
+//				session = sesMan.verifyToken(httpRequest, httpResponse);
+//			} catch(Exception ex) {
+//				throw ex;
+//			}
+//			if ( session==null ) throw new LogicalException(ErrorCode.AUTH_901);	// 로그인되어 있지 않습니다.			
+//			if ( !session.getUserId().equals(userId) ) throw new LogicalException(ErrorCode.AUTH_102);
+//			
+//			int updatedRows = commonMapper.updateUserSettings(userId, agreementNoticeNewsYn, agreementHiringNewsYn, agreementEventYn, agreementAdYn);
+//			if ( updatedRows != 1 ) throw new Exception("변경된 행이 1행이 아님 [" + updatedRows + "]");
+//			
+//			
+//			
+//			Map<String, String> settings = commonMapper.getUserSettings(userId);			
+//			res.setResponse(settings);
+//		} catch(Exception ex) {
+//		res.setException(ex);
+//		}
+//		
+//		return new ResponseEntity<JsonResponse<Map<String, String>>>(res, HttpStatus.OK);	
+//	}
 	@RequestMapping(value="/user/{userId}/setting/", method=RequestMethod.POST)
 	public ResponseEntity<JsonResponse<Map<String, String>>> updateUserSettingsByUserId(
 							@PathVariable("userId")		Long userId,
-							@RequestParam(value="agreementNoticeNewsYn",	required=true)	String agreementNoticeNewsYn,
-							@RequestParam(value="agreementHiringNewsYn",	required=true)	String agreementHiringNewsYn,
-							@RequestParam(value="agreementEventYn",			required=true)	String agreementEventYn,
-							@RequestParam(value="agreementAdYn",			required=true)	String agreementAdYn,
+//							@RequestParam(value="agreementNoticeNewsYn",	required=true)	String agreementNoticeNewsYn,
+//							@RequestParam(value="agreementHiringNewsYn",	required=true)	String agreementHiringNewsYn,
+//							@RequestParam(value="agreementEventYn",			required=true)	String agreementEventYn,
+//							@RequestParam(value="agreementAdYn",			required=true)	String agreementAdYn,
+							@RequestBody Map<String, String> reqData,
 							HttpServletRequest httpRequest,
 							HttpServletResponse httpResponse
 			) {
@@ -185,7 +223,11 @@ public class JobSeekerUserController {
 			if ( session==null ) throw new LogicalException(ErrorCode.AUTH_901);	// 로그인되어 있지 않습니다.			
 			if ( !session.getUserId().equals(userId) ) throw new LogicalException(ErrorCode.AUTH_102);
 			
-			int updatedRows = commonMapper.updateUserSettings(userId, agreementNoticeNewsYn, agreementHiringNewsYn, agreementEventYn, agreementAdYn);
+			
+			System.out.println(reqData);
+			//int updatedRows = commonMapper.updateUserSettings(userId, agreementNoticeNewsYn, agreementHiringNewsYn, agreementEventYn, agreementAdYn);
+			
+			int updatedRows = commonMapper.updateUserSettings(userId, reqData.get("agreementNoticeNewsYn"), reqData.get("agreementHiringNewsYn"), reqData.get("agreementEventYn"), reqData.get("agreementAdYn"));
 			if ( updatedRows != 1 ) throw new Exception("변경된 행이 1행이 아님 [" + updatedRows + "]");
 			
 			
@@ -198,6 +240,10 @@ public class JobSeekerUserController {
 		
 		return new ResponseEntity<JsonResponse<Map<String, String>>>(res, HttpStatus.OK);	
 	}
+	
+	
+	
+	
 	
 	
 	/**************************************************************************************************************************/
