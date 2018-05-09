@@ -120,7 +120,9 @@ public class JobSeekerUserController {
 			
 			commonMapper.updateProfileImageYn(userId, "Y");
 			
-			res.setResponse("OK");
+			String profileImageUrl = systemConstants.getJOB_SEEKER_RESOURCE_URL_FULL() + "/" + userId + "/" + systemConstants.getJOB_SEEKER_RESOURCE_FILE_NAME_PROFILE_SMALL();
+			
+			res.setResponse(profileImageUrl);
 			
 		} catch(Exception ex) {
 			ex.printStackTrace();

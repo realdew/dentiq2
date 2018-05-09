@@ -159,7 +159,9 @@ public class HospitalUserController {
 			
 			commonMapper.updateLogoImageYn(hospitalId, "Y");
 			
-			res.setResponse("OK");
+			String logoImageUrl = systemConstants.getHOSPITAL_RESOURCE_URL_FULL() + "/" + hospitalId + "/" + systemConstants.getHOSPITAL_RESOURCE_FILE_NAME_LOGO_SMALL();
+			
+			res.setResponse(logoImageUrl);
 			
 		} catch(Exception ex) {
 			res.setException(ex);

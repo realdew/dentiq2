@@ -6,6 +6,7 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonInclude.Include;
 
+import dentiq2.api.code.SystemConstants;
 import dentiq2.api.util.JsonUtil;
 import lombok.Getter;
 import lombok.Setter;
@@ -102,6 +103,16 @@ public class Hospital {
 			else hasLogoImage = null;
 		}
 	
+	public String getLogoImageUrl() {
+		if ( hasLogoImage != null && hasLogoImage == true ) {
+			SystemConstants systemConstants = SystemConstants.getInstance();
+			return systemConstants.getHOSPITAL_RESOURCE_URL_FULL() + "/" + this.hospitalId + "/" + systemConstants.getHOSPITAL_RESOURCE_FILE_NAME_LOGO_SMALL();
+		} else {
+			return null;
+		}
+	}
+		
+		
 	// 위치/교통정보 필요함
 	
 	
