@@ -1,6 +1,6 @@
 package dentiq2.api.model;
 
-import java.util.Date;
+import java.time.LocalDateTime;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonInclude.Include;
@@ -21,9 +21,9 @@ public class Notice {
 	
 	@Getter @Setter private String webUrl;
 	
-	@Getter @Setter private Date createdTs;
+	@Getter @Setter private LocalDateTime createdTs;
 	
-	@Getter @Setter private Date lastUpdatedTs;
+	@Getter @Setter private LocalDateTime lastUpdatedTs;
 	
 	@Getter @Setter private String useYn;
 

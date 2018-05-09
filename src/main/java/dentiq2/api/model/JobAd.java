@@ -2,6 +2,7 @@ package dentiq2.api.model;
 
 
 import java.text.SimpleDateFormat;
+import java.time.LocalDateTime;
 import java.util.Date;
 import java.util.List;
 
@@ -161,14 +162,14 @@ public class JobAd {
 		
 	// 구직자가 지원한 공고를 보는 경우에, 공고지원일자
 	//TODO Date 형식이 문제를 일으킬 수 있으므로, 변환이 필요할 것으로 생각됨
-	@Getter @Setter private Date applyDt;
+	@Getter @Setter private LocalDateTime applyDt;
 	
 	// 구직자가 지원한 공고를 보는 경우(user_interaction.html)에, 이 공고가 어느 병원인가에 '지원'한 공고인지를 알려주는 FLAG
 	@Getter @Setter private Boolean appliedByCertainJobSeeker;
 	
 	
 	// 병원이 구직자에게 면접제안을 한 경우, 구직자가 이러한 공고들을 조회하는 경우에 사용되는 면접제안일자
-	@Getter @Setter private Date offerDt;
+	@Getter @Setter private LocalDateTime offerDt;
 	
 		
 	
