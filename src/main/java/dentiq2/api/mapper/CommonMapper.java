@@ -178,7 +178,13 @@ public interface CommonMapper {
 					@Param("itemCntPerPage")	Integer itemCntPerPage
 			) throws Exception;
 	
-
+	public List<JobAd> listPremierJobAd(
+			@Param("sidoCodeList")		List<String> sidoCodeList,
+			@Param("siguCodeList")		List<String> siguCodeList,
+			
+			@Param("jobAttrGroupList")	List<JobAttrGroup> jobAttrGroupList
+	) throws Exception;
+	
 	
 	
 	

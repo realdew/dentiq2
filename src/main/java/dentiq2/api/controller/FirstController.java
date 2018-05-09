@@ -219,17 +219,25 @@ public class FirstController {
 			List<JobAttrGroup> jobAttrGroupList = JobAttrGroup.createJobAttrGroupFromStringList(attrStrList);	// 속성 그룹 리스트 생성
 			PageInfo pageInfo = new PageInfo(pageNo, pageSize);		// 페이지 정보 생성
 			
-			List<JobAd> jobAdList = commonMapper.listJobAd(sidoCodeList, siguCodeList, jobAttrGroupList, adType, pageInfo.startIndexOnPage, pageInfo.itemCntPerPage);
+			List<JobAd> jobAdList = null;
+			if ( adType != null && adType.equals("2") ) {	// 프리미어인 경우
+				jobAdList = commonMapper.listPremierJobAd(sidoCodeList, siguCodeList, jobAttrGroupList);
+			} else {
+				jobAdList = commonMapper.listJobAd(sidoCodeList, siguCodeList, jobAttrGroupList, adType, pageInfo.startIndexOnPage, pageInfo.itemCntPerPage);
+			}
 			res.setResponse(jobAdList);
 		} catch(Exception ex) {
 			res.setException(ex);
 		}
 		
-		return new ResponseEntity<JsonResponse<List<JobAd>>>(res, HttpStatus.OK);
-		
+		return new ResponseEntity<JsonResponse<List<JobAd>>>(res, HttpStatus.OK);		
 	}
 	
 	
+	
+	/*
+	 * 공지 사항 출력
+	 */
 	@RequestMapping(value="/notice/", method=RequestMethod.GET)
 	public ResponseEntity< JsonResponse<List<Notice> > > listNoticeTitle() {
 		

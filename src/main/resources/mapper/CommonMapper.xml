@@ -553,6 +553,43 @@
 	</select>
 	-->
 	
+	
+	<select id="listPremierJobAd" resultMap="mapJobAd">
+		select A.* from JOB_AD_LIST_VIEW A
+		where AD_TYPE='2'
+			
+			<include refid="refJobAdAttr"></include>
+			
+			<!-- 시도 또는 시구로 조회 -->
+			<if test="sidoCodeList !=null || siguCodeList != null">
+				<trim prefix=" and ( " suffix=" ) ">
+					<if test = "sidoCodeList != null">
+						<trim prefix="SIDO_CODE in">
+							<foreach item="sidoCode" collection="sidoCodeList" open="(" separator="," close=")">
+				        		#{sidoCode}
+							</foreach>
+						</trim>
+					</if>
+					
+					<if test="sidoCodeList != null and siguCodeList != null">
+						or
+					</if>
+					
+					<if test = "siguCodeList != null">
+						<trim prefix="SIGU_CODE in">
+							<foreach item="siguCode" collection="siguCodeList" open="(" separator="," close=")">
+				        		#{siguCode}
+							</foreach>
+						</trim>
+					</if>
+				</trim>
+			</if>
+			
+		order by RAND()
+		
+	</select>
+	
+	
 	<select id="listJobAd" resultMap="mapJobAd">
 		select A.* from JOB_AD_LIST_VIEW A
 		where 1=1
