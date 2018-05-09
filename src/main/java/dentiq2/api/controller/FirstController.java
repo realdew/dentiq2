@@ -25,6 +25,7 @@ import dentiq2.api.model.JobAd;
 import dentiq2.api.model.JobAttrGroup;
 import dentiq2.api.model.Location;
 import dentiq2.api.model.LocationSummary;
+import dentiq2.api.model.Notice;
 import dentiq2.api.model.Resume;
 import dentiq2.api.model.JobAdSummary;
 import dentiq2.api.util.PageInfo;
@@ -227,5 +228,23 @@ public class FirstController {
 		return new ResponseEntity<JsonResponse<List<JobAd>>>(res, HttpStatus.OK);
 		
 	}
+	
+	
+	@RequestMapping(value="/notice/", method=RequestMethod.GET)
+	public ResponseEntity< JsonResponse<List<Notice> > > listNoticeTitle() {
+		
+		JsonResponse<List<Notice>> res = new JsonResponse<List<Notice>>();
+		try {
+			List<Notice> noticeList = commonMapper.listNoticeTitle();
+			
+			res.setResponse(noticeList);
+		} catch(Exception ex) {
+			res.setException(ex);
+		}
+		
+		return new ResponseEntity<JsonResponse<List<Notice>>>(res, HttpStatus.OK);
+		
+	}
+	
 	
 }

@@ -17,6 +17,7 @@ import dentiq2.api.model.JobAttrGroup;
 import dentiq2.api.model.JobSeekerUser;
 import dentiq2.api.model.Location;
 import dentiq2.api.model.LocationSummary;
+import dentiq2.api.model.Notice;
 import dentiq2.api.model.PaymentData;
 import dentiq2.api.model.Resume;
 import dentiq2.api.model.User;
@@ -444,8 +445,21 @@ public interface CommonMapper {
 	
 	
 	
+	/**************************************************************************************************************************/
+	/*                                                                                                                        */
+	/*                                                  	기타                                                              */
+	/*                                                                                                                        */
+	/**************************************************************************************************************************/
 	
+	@Select("select * from NOTICE where USE_YN='Y'")
+	public List<Notice> listNoticeTitle() throws Exception;
 	
+	@Insert("insert into NOTICE(TITLE, CONTENT, WEB_URL) values (#{title}, #{content}, #{notice})")
+	public Notice createNotice(Notice notice) throws Exception;
 	
+	@Update("update NOTICE set USE_YN='N' where NOTICE_ID=#{noticeId}")
+	public void deleteNotice(@Param("noticeId") Long noticeId) throws Exception;
 	
+	@Update("update NOTICE set NOTICE_TYPE=#{noticeType}, TITLE=#{title}, CONTENT=#{content}, WEB_URL=#{webUrl} where NOTICE_ID=#{noticeId}")
+	public void updateNotice(Notice notice) throws Exception;
 }
